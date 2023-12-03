@@ -6,4 +6,6 @@ YM2609 (aka OPNA2) is a fantasy (= fictional) sound chip (Yamaha YM2608 (aka OPN
 
 The chip features 12 FM (OPM + OPN + more functions) channels, 12 PSG (AY8930-like but with more functionality) channels, 6 rhythm sound source, 6 ADPCM-A and 3 ADPCM-B (better sound quality than ADPCM-A) channels. 1st ADPCM-B channel has 256 KiB sample buffer, 2nd and 3rd ones have 16 MiB sample buffers each. ADPCM-A buffer size seems to be custom. Rhythm sound source seems to be identical to YM2608 one, except maybe extended panning capabilities.
 
+The chip also features DSP effects chain (equalizer, compressor, LP/HP filters, reverb, chorus, and left/right phase inversion) which can be applied to one or all channels (?????)
+
 The full spec is [here](https://github.com/kuma4649/MDSound/blob/master/YM2609.txt) and [here](https://github.com/kuma4649/MDSound/blob/master/PSG2.txt)
