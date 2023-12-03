@@ -8,4 +8,4 @@ The chip features 12 FM (OPM + OPN + more functions) channels, 12 PSG (AY8930-li
 
 The chip also features DSP effects chain (equalizer, compressor, LP/HP filters, reverb, chorus, and left/right phase inversion) which can be applied to one or all channels (?????)
 
-The full spec is [here](https://github.com/kuma4649/MDSound/blob/master/YM2609.txt) and [here](https://github.com/kuma4649/MDSound/blob/master/PSG2.txt)
+The full spec is [here](https://github.com/kuma4649/MDSound/blob/master/YM2609.txt)
