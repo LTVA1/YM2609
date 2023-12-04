@@ -15,6 +15,7 @@ add_executable(
     Project 
     src/main.cpp
     src/fmgen.h
+    src/fmvgen.h
     ${EFF_DIR}/chorus.h
     ${EFF_DIR}/CRingBuffur.h
     ${EFF_DIR}/CMyFilter.h
