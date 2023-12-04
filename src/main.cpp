@@ -18,7 +18,9 @@ int main()
 
     std::cout << "euiyrte" << std::endl;
 
-    while(1) {}
+    //while(1) {}
+    int i = 0;
+    std::cin >> i;
 
     return 0;
 }
