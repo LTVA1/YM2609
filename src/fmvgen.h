@@ -1,11 +1,6 @@
 #pragma once
 #include "fmgen.h"
 
-enum OpType : int
-{
-    typeN = 0,
-    typeM = 1
-};
 
 class fmvgen : public fmgen
 {
@@ -1454,7 +1449,6 @@ class fmvgen : public fmgen
                     if (!use[i] && ( ((op[i].algLink_ & mask) == 0) || i == 0 ))
                     {
                         use[i] = true;
-                        //oAlg.Add(i);
                         omask |= (byte)(1 << i);
                         carrier &= (byte)(~op[i].algLink_);
                     }
@@ -1462,12 +1456,12 @@ class fmvgen : public fmgen
                 mask = (byte)(~omask);
             }
 
-            if (carrier != 0xf)
+            /*if (carrier != 0xf)
             {
                 for (int i = 0; i < 4; i++)
                     Console.WriteLine("algLink:{0}:{1}", i, op[i].algLink_);
                 Console.WriteLine("carrier:{0}", carrier);
-            }
+            }*/
         }
 
     };

@@ -1475,12 +1475,12 @@ class fmgen
         // ---------------------------------------------------------------------------
         //
         //
-        void StoreSample(int& dest, int data)
+        static void StoreSample(int& dest, int data)
         {
             dest = (int)Limit(dest + data, 0x7fff, -0x8000);
         }
 
-        int Limit(int v, int max, int min)
+        static int Limit(int v, int max, int min)
         {
             return v > max ? max : (v < min ? min : v);
         }

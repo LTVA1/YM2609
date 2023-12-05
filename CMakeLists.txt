@@ -1,7 +1,7 @@
-SET(GCC_COVERAGE_COMPILE_FLAGS "-O3 -ffast-math -s")
+# SET(GCC_COVERAGE_COMPILE_FLAGS "-O3 -ffast-math -s")
 
 # Minimum version of CMake required to build this project
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 # Name of the project
 project(YM2609)
@@ -16,9 +16,12 @@ add_executable(
     src/main.cpp
     src/fmgen.h
     src/fmvgen.h
+    src/psg.h
+    src/psg2.h
     ${EFF_DIR}/chorus.h
     ${EFF_DIR}/CRingBuffur.h
     ${EFF_DIR}/CMyFilter.h
+    ${EFF_DIR}/Compressor.h
     ${EFF_DIR}/distortion.h
     ${EFF_DIR}/eq3band.h
     ${EFF_DIR}/HPFLPF.h
