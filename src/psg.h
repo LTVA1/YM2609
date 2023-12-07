@@ -145,12 +145,12 @@ class PSG
         void MakeEnvelopTable()
         {
             // 0 lo  1 up 2 down 3 hi
-            uint8_t* table1 = new uint8_t[16 * 2]             {
+            uint8_t table1[16 * 2]     =        {
                 2,0, 2,0, 2,0, 2,0, 1,0, 1,0, 1,0, 1,0,
                 2,2, 2,0, 2,1, 2,3, 1,1, 1,3, 1,2, 1,0
             };
-            uint8_t* table2 = new uint8_t[4] { 0, 0, 31, 31 };
-            uint8_t* table3 = new uint8_t[4] { 0, 1, 255, 0 };
+            uint8_t table2[4] = { 0, 0, 31, 31 };
+            uint8_t table3[4] = { 0, 1, 255, 0 };
 
             uint32_t ptr = 0;
 
@@ -237,8 +237,8 @@ class PSG
         //
         virtual void Mix(int** dest, int nsamples)
         {
-            uint8_t* chenable = new uint8_t[3];
-            uint8_t* nenable = new uint8_t[3];
+            uint8_t chenable[3];
+            uint8_t nenable[3];
             uint8_t r7 = (uint8_t)~reg[7];
 
             if (((r7 & 0x3f) | ((reg[8] | reg[9] | reg[10]) & 0x1f)) != 0)
