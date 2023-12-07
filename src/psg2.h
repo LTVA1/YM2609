@@ -15,12 +15,12 @@ static const float panTable[8] = { 1.0f, 0.8756f, 0.7512f, 0.6012f, 0.4512f, 0.2
 class PSG2 : public PSG
 {
     protected:
-        uint8_t* panpot = new uint8_t[3];
-        uint8_t* panpotLM = new uint8_t[3];
-        uint8_t* panpotRM = new uint8_t[3];
-        uint8_t* phaseReset = new uint8_t[3];
-        bool* phaseResetBefore = new bool[3];
-        uint8_t* duty = new uint8_t[3];
+        uint8_t panpot[3];
+        uint8_t panpotLM[3];
+        uint8_t panpotRM[3];
+        uint8_t phaseReset[3];
+        bool phaseResetBefore[3];
+        uint8_t duty[3];
         double ncountDbl;
 
         typedef int (*Func) (int, uint32_t);
@@ -74,19 +74,19 @@ class PSG2 : public PSG
         ReversePhase* reversePhase;
         Compressor* compressor;
         int efcStartCh;
-        uint8_t** user = new uint8_t*[6] { new uint8_t[64], new uint8_t[64], new uint8_t[64], new uint8_t[64], new uint8_t[64], new uint8_t[64] };
+        uint8_t user[6][64];
         int userDefCounter = 0;
         int userDefNum = 0;
-        Func* tblGetSample;
+        //Func* tblGetSample;
         int num;
-        uint8_t* chenable = new uint8_t[3];
-        uint8_t* nenable = new uint8_t[3];
-        uint32_t* p = new uint32_t[3];
+        uint8_t chenable[3];
+        uint8_t nenable[3];
+        uint32_t p[3];
         const double ncountDiv = 32.0;
 
         void makeTblGetSample()
         {
-            tblGetSample = new Func[] {
+            /*tblGetSample = new Func[] {
                 GetSampleFromDuty,
                 GetSampleFromDuty,
                 GetSampleFromDuty,
@@ -103,7 +103,51 @@ class PSG2 : public PSG
                 GetSampleFromUserDef,
                 GetSampleFromUserDef,
                 GetSampleFromUserDef
-            };
+            };*/
+        }
+
+        int getSample(uint8_t duty, int k, uint32_t lv)
+        {
+            switch(duty)
+            {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                {
+                    return GetSampleFromDuty(k, lv);
+                    break;
+                }
+
+                case 8:
+                {
+                    return GetSampleFromTriangle(k, lv);
+                    break;
+                }
+
+                case 9:
+                {
+                    return GetSampleFromSaw(k, lv);
+                    break;
+                }
+
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                case 14:
+                case 15:
+                {
+                    return GetSampleFromUserDef(k, lv);
+                    break;
+                }
+
+                default: break;
+            }
         }
 
     public:
@@ -258,7 +302,7 @@ class PSG2 : public PSG
                             {
                                 for (int k = 0; k < 3; k++)
                                 {
-                                    sample = tblGetSample[duty[k]](k, olevel[k]);
+                                    sample = getSample(duty[k], k, olevel[k]);
                                     int L = sample;
                                     int R = sample;
                                     distort->Mix(efcStartCh + k, L, R);
@@ -311,7 +355,7 @@ class PSG2 : public PSG
 
                                 for (int k = 0; k < 3; k++)
                                 {
-                                    sample = tblGetSample[duty[k]](k, olevel[k]);
+                                    sample = getSample(duty[k], k, olevel[k]);
                                     int L = sample;
                                     int R = sample;
 
@@ -387,7 +431,7 @@ class PSG2 : public PSG
                             for (int k = 0; k < 3; k++)
                             {
                                 uint32_t lv = (p[k] == 3 ? env : olevel[k]);
-                                sample = tblGetSample[duty[k]](k, lv);
+                                sample = getSample(duty[k], k, lv);
                                 int L = sample;
                                 int R = sample;
 
