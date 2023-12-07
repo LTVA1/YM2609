@@ -32,7 +32,7 @@ class HPFLPF
         int clock;
         int maxCh;
         ChInfo* chInfo = NULL;
-        float* fbuf = new float[2] { 0.0f, 0.0f };
+        float fbuf[2];
         int currentCh = 0;
 
     public:
@@ -47,10 +47,13 @@ class HPFLPF
         void Init()
         {
             chInfo = new ChInfo[maxCh];
+            
+            fbuf[0] = 0.0f;
+            fbuf[1] = 0.0f;
+
             for (int i = 0; i < maxCh; i++)
             {
                 chInfo[i] = ChInfo();
-
                 // 内部変数
                 // 高音域のみ通す(低音域をカットする)フィルタ設定(左右分)
                 // カットする周波数の目安は20Hz～300Hz程度

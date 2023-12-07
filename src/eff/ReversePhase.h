@@ -6,49 +6,15 @@
 class ReversePhase
 {
     public:
-        int*** SSG;
-        int*** FM;
-        int** Rhythm;
-        int** AdpcmA;
-        int** Adpcm;
+        int SSG[4][3][2];
+        int FM[2][6][2];
+        int Rhythm[6][2];
+        int AdpcmA[6][2];
+        int Adpcm[3][2];
 
         ReversePhase()
         {
             Init();
-        }
-
-        ~ReversePhase()
-        {
-            for(int i = 0; i < 4; i++)
-            {
-                for(int j = 0; j < 3; j++)
-                {
-                    delete SSG[i][j];
-                }
-            }
-
-            for(int i = 0; i < 2; i++)
-            {
-                for(int j = 0; j < 6; j++)
-                {
-                    delete FM[i][j];
-                }
-            }
-            
-            for(int i = 0; i < 6; i++)
-            {
-                delete Rhythm[i];
-            }
-
-            for(int i = 0; i < 6; i++)
-            {
-                delete AdpcmA[i];
-            }
-
-            for(int i = 0; i < 3; i++)
-            {
-                delete Adpcm[i];
-            }
         }
 
         void SetReg(uint32_t adr, uint8_t data)
@@ -117,7 +83,7 @@ class ReversePhase
     private:
         void Init()
         {
-            SSG = new int**[4]{
+            /*SSG = new int**[4]{
                 new int*[3] { new int[2], new int[2], new int[2] },
                 new int*[3] { new int[2], new int[2], new int[2] },
                 new int*[3] { new int[2], new int[2], new int[2] },
@@ -129,7 +95,7 @@ class ReversePhase
             };
             Rhythm = new int*[6] { new int[2], new int[2], new int[2], new int[2], new int[2], new int[2] };
             AdpcmA = new int*[6] { new int[2], new int[2], new int[2], new int[2], new int[2], new int[2] };
-            Adpcm = new int*[3] { new int[2], new int[2], new int[2] };
+            Adpcm = new int*[3] { new int[2], new int[2], new int[2] };*/
 
             for (int i = 0; i < 6; i++)
             {

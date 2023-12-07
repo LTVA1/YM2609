@@ -7,7 +7,7 @@
 class reverb
 {
     private:
-        int** Buf = new int* [2] { NULL, NULL };
+        int* Buf[2];
         int Pos = 0;
         int Delta = 0;
         int currentCh = 0;
@@ -26,7 +26,8 @@ class reverb
 
         reverb(int bufSize, int ch)
         {
-            this->Buf = new int*[2] { new int[bufSize], new int[bufSize] };
+            this->Buf[0] = new int[bufSize];
+            this->Buf[1] = new int[bufSize];
             this->bufSize = bufSize;
             Chs = ch;
             initParams();
@@ -36,7 +37,6 @@ class reverb
         {
             delete Buf[0];
             delete Buf[1];
-            delete[] Buf;
 
             delete[] sl;
         }
@@ -53,7 +53,7 @@ class reverb
                 SetSendLevel(i, 0);
             }
 
-            this->Buf = new int*[2] { new int[bufSize], new int[bufSize] };
+            //this->Buf = new int*[2] { new int[bufSize], new int[bufSize] };
         }
 
         void SetDelta(int n)

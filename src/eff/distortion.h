@@ -23,7 +23,7 @@ class distortion
         int clock;
         int maxCh;
         ChInfo* chInfo = NULL;
-        float* fbuf = new float[2] { 0.0f, 0.0f };
+        float fbuf[2];
         int currentCh = 0;
         
     public:
@@ -38,12 +38,15 @@ class distortion
         ~distortion()
         {
             delete[] chInfo;
-            delete[] fbuf;
+            //delete[] fbuf;
         }
 
         void Init()
         {
             chInfo = new ChInfo[maxCh];
+
+            fbuf[0] = 0.0f;
+            fbuf[1] = 0.0f;
 
             for (int i = 0; i < maxCh; i++)
             {

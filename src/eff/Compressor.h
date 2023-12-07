@@ -35,7 +35,7 @@ class Compressor
         int maxCh;
         ChInfo* chInfo = NULL;
         ChInfo sysInfo;
-        float* fbuf = new float[2];
+        float fbuf[2];
         float fr, fl;
 
 
