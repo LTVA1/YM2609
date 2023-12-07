@@ -106,6 +106,8 @@ class fmgen
                             multable_[h][l] = (uint32_t)(mul * rr);
                         }
                     }
+
+                    delete[] dt2lv;
                 }
             
             public:
