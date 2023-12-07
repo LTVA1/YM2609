@@ -80,8 +80,7 @@ class fmgen
         //	Types ----------------------------------------------------------------
         //typedef FM_SAMPLETYPE   Sample;
         //typedef int32           ISample;
-
-
+        
         class Chip
         {
             private:
@@ -89,7 +88,7 @@ class fmgen
                 uint32_t aml_;
                 uint32_t pml_;
                 int pmv_;
-                uint32_t** multable_ = new uint32_t*[4] { new uint32_t[16], new uint32_t[16], new uint32_t[16], new uint32_t[16] };
+                uint32_t multable_[4][16];
                 void MakeTable()
                 {
                     int h, l;
@@ -108,8 +107,6 @@ class fmgen
                         }
                     }
                 }
-
-                
             
             public:
                 OpType optype_;
@@ -1099,7 +1096,6 @@ class fmgen
 
             public:
                 Operator* op;
-
 
                 Channel4()
                 {
