@@ -341,7 +341,7 @@ class fmgen
                 //	１サンプル合成
 
                 //	ISample を envelop count (2π) に変換するシフト量
-                const int IS2EC_SHIFT = ((20 + FM_PGBITS) - 13);
+                static const int IS2EC_SHIFT = ((20 + FM_PGBITS) - 13);
                 int out_, out2_;
                 //	Envelop Generator ---------------------------------------------------
                 enum EGPhase { next, attack, decay, sustain, release, off };
@@ -1087,7 +1087,6 @@ class fmgen
             private:
                 static constexpr const uint8_t fbtable[8] = { 31, 7, 6, 5, 4, 3, 2, 1 };
                 static bool tablehasmade;
-                static int kftable[64];
                 uint32_t fb;
                 int buf[4];
                 int In[3];          // 各 OP の入力ポインタ
@@ -1097,6 +1096,7 @@ class fmgen
                 Chip chip_;
 
             public:
+                static int kftable[64];
                 Operator* op;
 
                 Channel4()

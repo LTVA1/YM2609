@@ -10,7 +10,9 @@
 #include "eff/ReversePhase.h"
 
 #include "psg2.h"
-#include "opna.h"
+#include "ADPCMA.h"
+#include "ADPCMB.h"
+#include "FM6.h"
 
 //	YM2609(OPNA2) ---------------------------------------------------
 class OPNA2 : public OPNABase
@@ -112,9 +114,9 @@ class OPNA2 : public OPNABase
         Compressor* compressor;
 
     protected:
-        FM6* fm6 = NULL;
-        PSG2* psg2 = NULL;
-        ADPCMB* adpcmb = NULL;
+        FM6 fm6[2];
+        PSG2 psg2[4];
+        ADPCMB adpcmb[3];
         ADPCMA adpcma;
 
         uint8_t prescale;

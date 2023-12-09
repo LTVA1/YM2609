@@ -91,6 +91,36 @@ class OPNBase : public Timer
             chip = Chip();
         }
 
+        void SetPrescaler(uint32_t p)
+        {
+            int8_t table[3][2] = {{ 6, 4 }, { 3, 2 }, { 2, 1 } };
+            uint8_t table2[8] = { 108, 77, 71, 67, 62, 44, 8, 5 };
+            // 512
+            if (prescale != p)
+            {
+                prescale = (uint8_t)p;
+                //assert(0 <= prescale && prescale< 3);
+
+                uint32_t fmclock = (uint32_t)(clock / table[p][0] / 12);
+
+                rate = psgrate;
+
+                // 合成周波数と出力周波数の比
+                //assert(fmclock< (0x80000000 >> FM_RATIOBITS));
+                uint32_t ratio = ((fmclock << FM_RATIOBITS) + rate / 2) / rate;
+
+                SetTimerBase(fmclock);
+                //		MakeTimeTable(ratio);
+                chip.SetRatio(ratio);
+                psg.SetClock((int)(clock / table[p][1]), (int)psgrate);
+
+                for (int i = 0; i < 8; i++)
+                {
+                    lfotable[i] = (ratio << (2 + FM_LFOCBITS - FM_RATIOBITS)) / table2[i];
+                }
+            }
+        }
+
         //	初期化
         bool Init(uint32_t c, uint32_t r)
         {
@@ -197,36 +227,6 @@ class OPNBase : public Timer
                     case 9: // 90-9E SSG-EC
                         op.SetSSGEC(data & 0x0f);
                         break;
-                }
-            }
-        }
-
-        void SetPrescaler(uint32_t p)
-        {
-            int8_t table[3][2] = {{ 6, 4 }, { 3, 2 }, { 2, 1 } };
-            uint8_t table2[8] = { 108, 77, 71, 67, 62, 44, 8, 5 };
-            // 512
-            if (prescale != p)
-            {
-                prescale = (uint8_t)p;
-                //assert(0 <= prescale && prescale< 3);
-
-                uint32_t fmclock = (uint32_t)(clock / table[p][0] / 12);
-
-                rate = psgrate;
-
-                // 合成周波数と出力周波数の比
-                //assert(fmclock< (0x80000000 >> FM_RATIOBITS));
-                uint32_t ratio = ((fmclock << FM_RATIOBITS) + rate / 2) / rate;
-
-                SetTimerBase(fmclock);
-                //		MakeTimeTable(ratio);
-                chip.SetRatio(ratio);
-                psg.SetClock((int)(clock / table[p][1]), (int)psgrate);
-
-                for (int i = 0; i < 8; i++)
-                {
-                    lfotable[i] = (ratio << (2 + FM_LFOCBITS - FM_RATIOBITS)) / table2[i];
                 }
             }
         }

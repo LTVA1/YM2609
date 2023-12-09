@@ -157,10 +157,10 @@ class FM6
 
                     if (waveSetDic)
                     {
-                        if (dicOpeWav.ContainsKey((int)data))
+                        /*if (dicOpeWav.ContainsKey((int)data))
                         {
                             fmvgen::sinetable[waveCh][wavetype] = dicOpeWav[(int)data];
-                        }
+                        }*/
                         break;
                     }
 

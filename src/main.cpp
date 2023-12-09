@@ -5,7 +5,7 @@
 #include "Timer.h"
 #include "psg.h"
 #include "psg2.h"
-//#include "opna2.h"
+#include "opna2.h"
 #include <iostream>
 
 int main()
