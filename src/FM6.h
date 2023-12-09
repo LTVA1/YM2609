@@ -4,19 +4,6 @@
 
 class FM6
 {
-    private:
-        reverb* reverb;
-        distortion* distortion;
-        chorus* chorus;
-        HPFLPF* hpflpf;
-        ReversePhase* reversePhase;
-        Compressor* compressor;
-        int efcStartCh;
-        int num;
-
-        int ibuf[4];
-        int idest[6];
-
     public:
         OPNA2* parent = NULL;
 
@@ -619,4 +606,18 @@ class FM6
             chip.SetAML((uint32_t)(OPNA2::amtable[(lfocount >> (FM_LFOCBITS + 1)) & 0xff]));
             lfocount += lfodcount;
         }
+        
+    private:
+        reverb* reverb;
+        distortion* distortion;
+        chorus* chorus;
+        HPFLPF* hpflpf;
+        ReversePhase* reversePhase;
+        Compressor* compressor;
+        int efcStartCh;
+        int num;
+
+        int ibuf[4];
+        int idest[6];
+
 };
