@@ -495,7 +495,6 @@ class OPNA2 : public OPNABase
             {
                 FmSetReg(1, addr - 0x200, (uint8_t)data);
             }
-
         }
 
         void FmSetReg(int ch, uint32_t addr, uint8_t data)
