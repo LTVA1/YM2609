@@ -207,11 +207,11 @@ class OPNA2 : public OPNABase
 
                 fmvgen::sinetable[waveCh][wavetype][cnt] = s;
                 wavecounter++;
-                if (wavecounter > fmvgen.waveBufSize * 2)
+                if (wavecounter > fmvgen::waveBufSize * 2)
                 {
                     wavecounter = 0;
                     wavetype++;
-                    if (wavetype > fmvgen.waveTypeSize)
+                    if (wavetype > fmvgen::waveTypeSize)
                     {
                         wavetype = 0;
                         waveCh = 0;

@@ -13,8 +13,8 @@ class fmvgen : public fmgen
 {
     public:
         const int waveChSize = 12;
-        const int waveTypeSize = 4;
-        const int waveBufSize = 1024;
+        const static int waveTypeSize = 4;
+        const static int waveBufSize = 1024;
 
         static uint32_t sinetable[12][4][1024];/* = new uint32_t[12][][]{
             new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] },
