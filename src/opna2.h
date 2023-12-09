@@ -545,7 +545,6 @@ class OPNA2 : public OPNABase
             }
         }
 
-
         uint32_t GetReg(uint32_t addr)
         {
             return 0;
