@@ -93,7 +93,23 @@ class OPNA2 : public OPNABase
 
             for (int i = 0; i < 6; i++)
             {
+                delete[] rhythm[i].sample;
                 rhythm[i].sample = NULL;
+            }
+            
+            if(adpcma.buf != NULL)
+            {
+                delete[] adpcma.buf;
+                adpcma.buf = NULL;
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                if(adpcmb[i].adpcmbuf != NULL)
+                {
+                    delete[] adpcmb[i].adpcmbuf;
+                    adpcmb[i].adpcmbuf = NULL;
+                }
             }
         }
 
