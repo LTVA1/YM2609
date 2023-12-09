@@ -163,7 +163,7 @@ class OPNA2 : public OPNABase
 
             if (!SetRate(c, r, ipflag))
                 return false;
-            if (!base.Init(c, r, ipflag))
+            if (!OPNABase.Init(c, r, ipflag))
                 return false;
 
             Reset();
@@ -265,7 +265,7 @@ class OPNA2 : public OPNABase
         //
         bool SetRate(uint32_t c, uint32_t r, bool ipflag = false)
         {
-            if (!OPNA::SetRate(c, r, ipflag))
+            if (!OPNABase::SetRate(c, r, ipflag))
                 return false;
 
             RebuildTimeTable();
@@ -318,7 +318,7 @@ class OPNA2 : public OPNABase
             reg29 = 0x1f;
             rhythmkey = 0;
             limitaddr = 0x3ffff;
-            OPNA::Reset();
+            OPNABase::Reset();
 
             SetPrescaler(0);
 
@@ -344,7 +344,7 @@ class OPNA2 : public OPNABase
 
         void SetPrescaler(uint32_t p)
         {
-            OPNA::SetPrescaler(p);
+            OPNABase::SetPrescaler(p);
 
             int8_t table[3][2] = { { 6, 4 }, { 3, 2 }, { 2, 1 }, };
             uint8_t table2[8] = { 108, 77, 71, 67, 62, 44, 8, 5 };
@@ -646,17 +646,17 @@ class OPNA2 : public OPNABase
 
         void SetTimerA(uint32_t addr, uint32_t data)
         {
-            OPNA::SetTimerA(addr, data);
+            OPNABase::SetTimerA(addr, data);
         }
 
         void SetTimerB(uint32_t data)
         {
-            OPNA::SetTimerB(data);
+            OPNABase::SetTimerB(data);
         }
 
         void SetTimerControl(uint32_t data)
         {
-            OPNA::SetTimerControl(data);
+            OPNABase::SetTimerControl(data);
         }
 
     // リズム音源関係
@@ -737,7 +737,7 @@ class OPNA2 : public OPNABase
 
         void RebuildTimeTable()
         {
-            OPNA::RebuildTimeTable();
+            OPNABase::RebuildTimeTable();
 
             int p = prescale;
             prescale = 0xff;//-1;
