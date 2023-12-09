@@ -18,6 +18,8 @@ add_executable(
     src/fmvgen.h
     src/psg.h
     src/psg2.h
+    src/ADPCMA.h
+    src/ADPCMB.h
     ${EFF_DIR}/chorus.h
     ${EFF_DIR}/CRingBuffur.h
     ${EFF_DIR}/CMyFilter.h

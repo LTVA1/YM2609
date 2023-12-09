@@ -55,7 +55,7 @@ class Timer
             return (uint32_t)((ta < tb ? ta : tb) + 1);
         }
 
-    protected:
+    //protected:
         void SetStatus(uint32_t bit)
         {
         }

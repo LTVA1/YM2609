@@ -23,8 +23,6 @@ class PSG2 : public PSG
         uint8_t duty[3];
         double ncountDbl;
 
-        typedef int (*Func) (int, uint32_t);
-
     private:
         int GetSampleFromUserDef(int k, uint32_t lv)
         {
