@@ -1,13 +1,7 @@
 #pragma once
 #include "fmgen.h"
 
-#ifndef my_min
-    #define my_min(a, b) ((a) < (b) ? (a) : (b))
-#endif
-
-#ifndef my_max
-    #define my_max(a, b) ((a) > (b) ? (a) : (b))
-#endif
+#include "pantable_opna.h"
 
 class fmvgen : public fmgen
 {
@@ -16,7 +10,7 @@ class fmvgen : public fmgen
         const static int waveTypeSize = 4;
         const static int waveBufSize = 1024;
 
-        static uint32_t sinetable[12][4][1024];/* = new uint32_t[12][][]{
+        /* = new uint32_t[12][][]{
             new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] },
             new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] },
             new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] },
@@ -182,9 +176,9 @@ class fmvgen : public fmgen
                 // ---------------------------------------------------------------------------
                 //	Operator
                 //
-                bool tablehasmade = false;
+                //bool tablehasmade = false;
                 //uint32_t[] sinetable = new uint32_t[1024];
-                static int cltable[FM_CLENTS];
+                int cltable[FM_CLENTS];
 
                 OpType type_;       // OP の種類 (M, N...)
                 uint32_t ms_;
@@ -206,8 +200,12 @@ class fmvgen : public fmgen
                 //: chip_(0)
                 Operator()
                 {
-                    if (!tablehasmade)
-                        MakeTable();
+                    for(int i = 0; i < FM_CLENTS; i++)
+                    {
+                        cltable[i] = 0;
+                    }
+
+                    MakeTable();
 
                     // EG Part
                     ar_ = dr_ = sr_ = rr_ = key_scale_rate_ = 0;
@@ -281,7 +279,7 @@ class fmvgen : public fmgen
 
                     fmvgen::MakeLFOTable();
 
-                    tablehasmade = true;
+                    //tablehasmade = true;
                 }
 
                 void SetDPBN(uint32_t dp, uint32_t bn)
@@ -456,12 +454,12 @@ class fmvgen : public fmgen
                 // 入力: s = 20+FM_PGBITS = 29
                 uint32_t Sine(int c,int s)
                 {
-                    return fmvgen::sinetable[c][wt_][((s) >> (20 + FM_PGBITS - FM_OPSINBITS)) & (FM_OPSINENTS - 1)];
+                    return sinetable_opna[c][wt_][((s) >> (20 + FM_PGBITS - FM_OPSINBITS)) & (FM_OPSINENTS - 1)];
                 }
 
                 int SINE(int c,int s)
                 {
-                    return (int)fmvgen::sinetable[c][wt_][(s) & (FM_OPSINENTS - 1)];
+                    return (int)sinetable_opna[c][wt_][(s) & (FM_OPSINENTS - 1)];
                 }
 
 
@@ -957,14 +955,14 @@ class fmvgen : public fmgen
                 {
                 }
 
-                static int* dbgGetClTable()
+                int* dbgGetClTable()
                 {
                     return cltable;
                 }
 
                 uint32_t* dbgGetSineTable(int c, int t)
                 {
-                    return fmvgen::sinetable[c][t];
+                    return sinetable_opna[c][t];
                 }
     };
 
@@ -976,8 +974,8 @@ class fmvgen : public fmgen
             double r = (i * 2 + 1) * FM_PI / FM_OPSINENTS;
             double q = -256 * log(sin(r)) / log2;
             uint32_t s = (uint32_t)((int)(floor(q + 0.5)) + 1);
-            sinetable[waveCh][wavetype][i] = s * 2;
-            sinetable[waveCh][wavetype][FM_OPSINENTS / 2 + i] = s * 2 + 1;
+            sinetable_opna[waveCh][wavetype][i] = s * 2;
+            sinetable_opna[waveCh][wavetype][FM_OPSINENTS / 2 + i] = s * 2 + 1;
         }
     }
 
@@ -993,7 +991,7 @@ class fmvgen : public fmgen
 
             Channel4(int ch = 0)
             {
-                if (!tablehasmade)
+                //if (!tablehasmade)
                     MakeTable();
 
                 SetAlgorithm(0);
@@ -1383,8 +1381,8 @@ class fmvgen : public fmgen
             }
 
         private:
-            static bool tablehasmade;
-            static int kftable[64];
+            //static bool tablehasmade;
+            int kftable[64];
             uint32_t fb;
             int buf[4];
             int In[3];          // 各 OP の入力ポインタ

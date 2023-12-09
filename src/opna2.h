@@ -14,6 +14,10 @@
 #include "ADPCMB.h"
 #include "FM6.h"
 
+#include "pantable_opna.h"
+
+#include "macros.h"
+
 //	YM2609(OPNA2) ---------------------------------------------------
 class OPNA2 : public OPNABase
 {
@@ -69,7 +73,7 @@ class OPNA2 : public OPNABase
 
             for (int i = 0; i < 2; i++)
             {
-                fm6[i].parent = this;
+                //fm6[i].parent = this;
             }
 
             for (int i = 0; i < 3; i++)
@@ -80,7 +84,7 @@ class OPNA2 : public OPNABase
                 adpcmb[i].adpcmvol = 0;
                 adpcmb[i].control2 = 0;
                 adpcmb[i].shiftBit = (i == 0) ? 6 : 9;
-                adpcmb[i].parent = this;
+                //adpcmb[i].parent = this;
             }
 
             csmch = &ch[2];
@@ -219,9 +223,9 @@ class OPNA2 : public OPNABase
 
                 uint32_t s;
                 if (d == 0) s = b;
-                else s = ((fmvgen::sinetable[waveCh][wavetype][cnt] & 0xff) | (uint32_t)((b & 0x1f) << 8));
+                else s = ((sinetable_opna[waveCh][wavetype][cnt] & 0xff) | (uint32_t)((b & 0x1f) << 8));
 
-                fmvgen::sinetable[waveCh][wavetype][cnt] = s;
+                sinetable_opna[waveCh][wavetype][cnt] = s;
                 wavecounter++;
                 if (wavecounter > fmvgen::waveBufSize * 2)
                 {
@@ -238,7 +242,7 @@ class OPNA2 : public OPNABase
 
         uint32_t* getOperatorWave(int waveCh,int wavetype)
         {
-            return fmvgen::sinetable[waveCh][wavetype];
+            return sinetable_opna[waveCh][wavetype];
         }
 
         void setOperatorWaveDic(int n, uint8_t* buf, uint32_t len)
@@ -505,11 +509,59 @@ class OPNA2 : public OPNABase
 
             if (addr < 0x200)
             {
-                FmSetReg(0, addr, (uint8_t)data);
+                if(addr == 0x24 || addr == 0x25) //TODO: we have only ONE TIMER 
+                {
+                    SetTimerA(addr, data); //a hack to not reference OPNA2 methods in FM6.h... please kill me
+                }
+
+                else if(addr == 0x26)
+                {
+                    SetTimerB(data);
+                }
+
+                else if(addr == 0x27)
+                {
+                    SetTimerControl(data);
+                }
+
+                if(addr == 0x2d || addr == 0x2e || addr == 0x2f)
+                {
+                    SetPrescaler(addr - 0x2d);
+                }
+
+                else
+                {
+                    FmSetReg(0, addr, (uint8_t)data);
+                }
             }
             else
             {
-                FmSetReg(1, addr - 0x200, (uint8_t)data);
+                //FmSetReg(1, addr - 0x200, (uint8_t)data);
+
+                if(addr - 0x200 == 0x24 || addr - 0x200 == 0x25)
+                {
+                    SetTimerA(addr - 0x200, data); //a hack to not reference OPNA2 methods in FM6.h... please kill me
+                }
+
+                else if(addr - 0x200 == 0x26)
+                {
+                    SetTimerB(data);
+                }
+
+                else if(addr - 0x200 == 0x27)
+                {
+                    SetTimerControl(data);
+                }
+
+                if(addr - 0x200 == 0x2d || addr - 0x200 == 0x2e || addr - 0x200 == 0x2f)
+                {
+                    SetPrescaler(addr - 0x200 - 0x2d);
+                }
+
+                else
+                {
+                    FmSetReg(1, addr - 0x200, (uint8_t)data);
+                }
             }
         }
 
@@ -569,7 +621,7 @@ class OPNA2 : public OPNABase
         //	音量設定
         void SetVolumeFM(int db)
         {
-            db = std::min(db, 20);
+            db = my_min(db, 20);
             if (db > -192)
             {
                 fm6[0].fmvolume = (int)(16384.0 * pow(10.0, db / 40.0));
@@ -592,7 +644,7 @@ class OPNA2 : public OPNABase
 
         void SetVolumeADPCM(int db)
         {
-            db = std::min(db, 20);
+            db = my_min(db, 20);
             if (db > -192)
             {
                 adpcmb[0].adpcmvol = (int)(65536.0 * pow(10.0, db / 40.0));
@@ -648,13 +700,13 @@ class OPNA2 : public OPNABase
         //
         void SetVolumeRhythmTotal(int db)
         {
-            db = std::min(db, 20);
+            db = my_min(db, 20);
             rhythmtvol = -(db * 2 / 3);
         }
 
         void SetVolumeRhythm(int index, int db)
         {
-            db = std::min(db, 20);
+            db = my_min(db, 20);
             rhythm[index].volume = -(db * 2 / 3);
         }
 
@@ -703,7 +755,7 @@ class OPNA2 : public OPNABase
                     if ((rhythmkey & (1 << i)) != 0 && (uint8_t)r.level < 128)
                     {
                         int db = fmvgen::Limit(rhythmtl + rhythmtvol + r.level + r.volume, 127, -31);
-                        int vol = tltable[FM_TLPOS + (db << (FM_TLBITS - 7))] >> 4;
+                        int vol = tltable_opna[FM_TLPOS + (db << (FM_TLBITS - 7))] >> 4;
                         int maskl = -((r.pan >> 1) & 1);
                         int maskr = -(r.pan & 1);
 

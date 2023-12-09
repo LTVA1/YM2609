@@ -3,6 +3,8 @@
 #include "CMyFilter.h"
 #include <cmath>
 
+#include "../macros.h"
+
 float convInt = 21474.83647f;
 
 class Compressor
@@ -46,6 +48,11 @@ class Compressor
             this->samplerate = samplerate;
             this->maxCh = maxCh;
             Init();
+        }
+
+        ~Compressor()
+        {
+            delete[] chInfo;
         }
 
         void Init()
@@ -183,7 +190,7 @@ class Compressor
         {
             if (!isSysIns && adr == 0)
             {
-                currentCh = std::max(std::min(data & 0x3f, 38), 0);
+                currentCh = my_max(my_min(data & 0x3f, 38), 0);
                 if ((data & 0x80) != 0) Init();
                 return;
             }
@@ -201,11 +208,11 @@ class Compressor
             }
             else if (adr == 2)
             {
-                info.threshold = std::max(data / 255.0f, 0.1f);
+                info.threshold = my_max(data / 255.0f, 0.1f);
             }
             else if (adr == 3)
             {
-                info.ratio = std::max(data / (255.0f / 10.0f), 1.0f);
+                info.ratio = my_max(data / (255.0f / 10.0f), 1.0f);
             }
             else if (adr == 4)
             {

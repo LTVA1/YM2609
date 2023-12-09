@@ -23,6 +23,7 @@ add_executable(
     src/opna.h
     src/opna2.h
     src/Timer.h
+    src/macros.h
     ${EFF_DIR}/chorus.h
     ${EFF_DIR}/CRingBuffur.h
     ${EFF_DIR}/CMyFilter.h

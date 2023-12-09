@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define my_min(a, b) ((a) >= (b) ? (b) : (a))
+#include "macros.h"
 
 #define FM_EG_BOTTOM 955
 #define FM_LFOBITS 8				// 変更不可
@@ -331,7 +331,7 @@ class fmgen
                 // ---------------------------------------------------------------------------
                 //	Operator
                 //
-                bool tablehasmade = false;
+                //bool tablehasmade = false;
                 uint32_t sinetable[1024];
                 int cltable[FM_CLENTS];
 
@@ -357,7 +357,7 @@ class fmgen
                 //: chip_(0)
                 Operator()
                 {
-                    if (!tablehasmade)
+                    //if (!tablehasmade)
                         MakeTable();
 
                     //sinetable=new uint32_t[1024];
@@ -443,7 +443,7 @@ class fmgen
 
                     fmgen::MakeLFOTable();
 
-                    tablehasmade = true;
+                    //tablehasmade = true;
                 }
 
                 void SetDPBN(uint32_t dp, uint32_t bn)
@@ -770,7 +770,7 @@ class fmgen
                 {
                     EGStep();
 
-                    int lv = std::max(0, 0x3ff - (tl_out_ + eg_level_)) << 1;
+                    int lv = my_max(0, 0x3ff - (tl_out_ + eg_level_)) << 1;
 
                     // noise & 1 ? lv : -lv と等価 
                     noise = (noise & 1) - 1;
@@ -1086,7 +1086,7 @@ class fmgen
             //
             private:
                 static constexpr const uint8_t fbtable[8] = { 31, 7, 6, 5, 4, 3, 2, 1 };
-                static bool tablehasmade;
+                //static bool tablehasmade;
                 uint32_t fb;
                 int buf[4];
                 int In[3];          // 各 OP の入力ポインタ
@@ -1096,13 +1096,13 @@ class fmgen
                 Chip chip_;
 
             public:
-                static int kftable[64];
+                int kftable[64];
                 Operator* op;
 
                 Channel4()
                 {
-                    tablehasmade = false;
-                    if (!tablehasmade)
+                    //tablehasmade = false;
+                    //if (!tablehasmade)
                         MakeTable();
 
                     SetAlgorithm(0);
@@ -1496,10 +1496,10 @@ class fmgen
 
             int i;
 
-            double** pms = new double*[2] {
-            new double[8]{  0, 1/360.0, 2/360.0, 3/360.0,  4/360.0,  6/360.0, 12/360.0,  24/360.0, },	// OPNA
+            double pms[2][8] =  {
+            {  0, 1/360.0, 2/360.0, 3/360.0,  4/360.0,  6/360.0, 12/360.0,  24/360.0, },	// OPNA
             //		{ 0, 1/240., 2/240., 4/240., 10/240., 20/240., 80/240., 140/240., },	// OPM
-            new double[8]{ 0, 1/480.0, 2/480.0, 4/480.0, 10/480.0, 20/480.0, 80/480.0, 140/480.0, }    // OPM
+            { 0, 1/480.0, 2/480.0, 4/480.0, 10/480.0, 20/480.0, 80/480.0, 140/480.0, }    // OPM
             //		{ 0, 1/960., 2/960., 4/960., 10/960., 20/960., 80/960., 140/960., },	// OPM
             };
             //		 3		 6,      12      30       60       240      420		/ 720

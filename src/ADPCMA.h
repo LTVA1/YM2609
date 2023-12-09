@@ -1,11 +1,11 @@
 #pragma once
 
-#include "opna2.h"
+#include "pantable_opna.h"
 
 class ADPCMA
 {
     public:
-        OPNA2* parent = NULL;
+        //OPNA2* parent = NULL;
 
         class Channel
         {
@@ -33,7 +33,7 @@ class ADPCMA
         uint8_t key;        // ADPCMA のキー
         int step;
         uint8_t reg[32];
-        static int16_t jedi_table[(48 + 1) * 16];
+        int16_t jedi_table[(48 + 1) * 16];
 
         ADPCMA(int num = 0, reverb* reverb = NULL, distortion* distortion = NULL, chorus* chorus = NULL, HPFLPF* hpflpf = NULL, ReversePhase* reversePhase = NULL, Compressor* compressor = NULL, int revStartCh = 0)
         {
@@ -105,7 +105,7 @@ class ADPCMA
                         //uint32_t maskr = (uint32_t)(r.panR == 0f ? -1 : 0);
 
                         int db = fmvgen::Limit(tl + tvol + r.level + r.volume, 127, -31);
-                        int vol = OPNABase::tltable[FM_TLPOS + (db << (FM_TLBITS - 7))] >> 4;
+                        int vol = tltable_opna[FM_TLPOS + (db << (FM_TLBITS - 7))] >> 4;
 
                         //Sample* dest = buffer;
                         uint32_t dest = 0;
@@ -203,8 +203,8 @@ class ADPCMA
                     break;
 
                 case 0x04:
-                    channel[currentCh].panL = OPNA2::panTable[((data >> 5) & 3) & 3] * ((data >> 7) & 1);
-                    channel[currentCh].panR = OPNA2::panTable[((data >> 2) & 3) & 3] * ((data >> 4) & 1);
+                    channel[currentCh].panL = panTable_opna[((data >> 5) & 3) & 3] * ((data >> 7) & 1);
+                    channel[currentCh].panR = panTable_opna[((data >> 2) & 3) & 3] * ((data >> 4) & 1);
                     break;
 
                 case 0x05:

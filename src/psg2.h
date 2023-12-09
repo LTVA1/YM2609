@@ -144,7 +144,7 @@ class PSG2 : public PSG
                     break;
                 }
 
-                default: break;
+                default: return 0; break;
             }
         }
 
@@ -474,6 +474,6 @@ class PSG2 : public PSG
 
         uint8_t* GetUserWave(int n)
         {
-            return user[std::min(std::max(n, 0), 5)];
+            return user[my_min(my_max(n, 0), 5)];
         }
 };

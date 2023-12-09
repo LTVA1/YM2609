@@ -1,11 +1,12 @@
 #pragma once
 
-#include "opna2.h"
+#include "pantable_opna.h"
+#include "macros.h"
 
 class FM6
 {
     public:
-        OPNA2* parent = NULL;
+        //OPNA2* parent = NULL;
 
         int fmvolume;
         fmvgen::Channel4 ch[6];
@@ -24,8 +25,8 @@ class FM6
             for (i = 0; i < 6; i++)
             {
                 pan[i] = 3;
-                panL[i] = OPNA2::panTable[0];
-                panR[i] = OPNA2::panTable[0];
+                panL[i] = panTable_opna[0];
+                panR[i] = panTable_opna[0];
                 ch[i].Reset();
             }
         }
@@ -102,7 +103,7 @@ class FM6
             {
 
                 // Timer -----------------------------------------------------------------
-                case 0x24:
+                /*case 0x24:
                 case 0x25:
                     parent->SetTimerA(addr, data);
                     break;
@@ -113,7 +114,7 @@ class FM6
 
                 case 0x27:
                     parent->SetTimerControl(data);
-                    break;
+                    break;*/
 
                 // Misc ------------------------------------------------------------------
                 case 0x28:      // Key On/Off
@@ -137,7 +138,7 @@ class FM6
                 case 0x2b:
                     wavetype = (int)(data & 0x3);
                     waveCh = (int)((data >> 4) & 0xf);
-                    waveCh = std::max(std::min(waveCh, 11), 0);
+                    waveCh = my_max(my_min(waveCh, 11), 0);
                     wavecounter = 0;
                     if ((data & 0x4) != 0) fmvgen::waveReset(waveCh, wavetype);
                     waveSetDic = ((data & 0x8) != 0);
@@ -163,21 +164,21 @@ class FM6
                         s = (uint8_t)data;
                     }
                     else {
-                        s = ((fmvgen::sinetable[waveCh][wavetype][cnt] & 0xff) | ((data & 0x1f) << 8));
+                        s = ((sinetable_opna[waveCh][wavetype][cnt] & 0xff) | ((data & 0x1f) << 8));
                     }
 
-                    fmvgen::sinetable[waveCh][wavetype][cnt] = s;
+                    sinetable_opna[waveCh][wavetype][cnt] = s;
                     wavecounter++;
 
                     if (FM_OPSINENTS * 2 <= wavecounter) wavecounter = 0;
                     break;
 
                 // Prescaler -------------------------------------------------------------
-                case 0x2d:
+                /*case 0x2d:
                 case 0x2e:
                 case 0x2f:
                     parent->SetPrescaler(addr - 0x2d);
-                    break;
+                    break;*/
 
                 // F-Number --------------------------------------------------------------
                 case 0x1a0:
@@ -199,13 +200,13 @@ class FM6
                 case 0x1a6:
                     c += 3;
                     fnum2[c] = (uint8_t)(data);
-                    panL[c] = OPNA2::panTable[(data >> 6) & 3];
+                    panL[c] = panTable_opna[(data >> 6) & 3];
                     break;
                 case 0xa4:
                 case 0xa5:
                 case 0xa6:
                     fnum2[c] = (uint8_t)(data);
-                    panL[c] = OPNA2::panTable[(data >> 6) & 3];
+                    panL[c] = panTable_opna[(data >> 6) & 3];
                     break;
 
                 case 0xa8:
@@ -234,14 +235,14 @@ class FM6
                     c += 3;
                     ch[c].SetFB((data >> 3) & 7);
                     ch[c].SetAlgorithm(data & 7);
-                    panR[c] = OPNA2::panTable[(data >> 6) & 3];
+                    panR[c] = panTable_opna[(data >> 6) & 3];
                     break;
                 case 0xb0:
                 case 0xb1:
                 case 0xb2:
                     ch[c].SetFB((data >> 3) & 7);
                     ch[c].SetAlgorithm(data & 7);
-                    panR[c] = OPNA2::panTable[(data >> 6) & 3];
+                    panR[c] = panTable_opna[(data >> 6) & 3];
                     break;
 
                 case 0x1b4:
@@ -602,8 +603,8 @@ class FM6
 
             //	Operator::SetPML(pmtable[(lfocount >> (FM_LFOCBITS+1)) & 0xff]);
             //	Operator::SetAML(amtable[(lfocount >> (FM_LFOCBITS+1)) & 0xff]);
-            chip.SetPML((uint32_t)(OPNA2::pmtable[(lfocount >> (FM_LFOCBITS + 1)) & 0xff]));
-            chip.SetAML((uint32_t)(OPNA2::amtable[(lfocount >> (FM_LFOCBITS + 1)) & 0xff]));
+            chip.SetPML((uint32_t)(pmtable_opna[(lfocount >> (FM_LFOCBITS + 1)) & 0xff]));
+            chip.SetAML((uint32_t)(amtable_opna[(lfocount >> (FM_LFOCBITS + 1)) & 0xff]));
             lfocount += lfodcount;
         }
     private:

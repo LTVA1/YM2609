@@ -3,6 +3,8 @@
 #include "Timer.h"
 #include "psg2.h"
 
+#include "macros.h"
+
 // ---------------------------------------------------------------------------
 //	OPN/A/B interface with ADPCM support
 //	Copyright (C) cisc 1998, 2003.
@@ -157,7 +159,7 @@ class OPNBase : public Timer
         //	音量設定
         void SetVolumeFM(int db)
         {
-            db = std::min(db, 20);
+            db = my_min(db, 20);
             if (db > -192)
                 fmvolume = (int)(16384.0 * pow(10.0, db / 40.0));
             else
@@ -262,20 +264,20 @@ class OPNBase : public Timer
         }
 };
 
+int amtable_opna[FM_LFOENTS];
+int pmtable_opna[FM_LFOENTS];
+int tltable_opna[FM_TLENTS + FM_TLPOS];
+
 //	OPN2 Base ------------------------------------------------------
 class OPNABase : public OPNBase
 {
     public:
         bool NO_BITTYPE_EMULATION = false;
 
-        static int amtable[FM_LFOENTS];
-        static int pmtable[FM_LFOENTS];
-        static int tltable[FM_TLENTS + FM_TLPOS];
-
         OPNABase()
         {
-            amtable[0] = -1;
-            tablehasmade = false;
+            amtable_opna[0] = -1;
+            //tablehasmade = false;
 
             adpcmbuf = NULL;
             memaddr = 0;
@@ -342,15 +344,15 @@ class OPNABase : public OPNBase
         //
         void MakeTable2()
         {
-            if (!tablehasmade)
-            {
+            //if (!tablehasmade)
+            //{
                 for (int i = -FM_TLPOS; i < FM_TLENTS; i++)
                 {
-                    tltable[i + FM_TLPOS] = (int)((uint32_t)(65536.0 * pow(2.0, i * -16.0 / FM_TLENTS))) - 1;
+                    tltable_opna[i + FM_TLPOS] = (int)((uint32_t)(65536.0 * pow(2.0, i * -16.0 / FM_TLENTS))) - 1;
                 }
 
-                tablehasmade = true;
-            }
+                //tablehasmade = true;
+            //}
         }
 
     // ---------------------------------------------------------------------------
@@ -821,14 +823,14 @@ class OPNABase : public OPNBase
 
             //	Operator::SetPML(pmtable[(lfocount >> (FM_LFOCBITS+1)) & 0xff]);
             //	Operator::SetAML(amtable[(lfocount >> (FM_LFOCBITS+1)) & 0xff]);
-            chip.SetPML((uint32_t)(pmtable[(lfocount >> (FM_LFOCBITS + 1)) & 0xff]));
-            chip.SetAML((uint32_t)(amtable[(lfocount >> (FM_LFOCBITS + 1)) & 0xff]));
+            chip.SetPML((uint32_t)(pmtable_opna[(lfocount >> (FM_LFOCBITS + 1)) & 0xff]));
+            chip.SetAML((uint32_t)(amtable_opna[(lfocount >> (FM_LFOCBITS + 1)) & 0xff]));
             lfocount += lfodcount;
         }
 
         static void BuildLFOTable()
         {
-            if (amtable[0] == -1)
+            if (amtable_opna[0] == -1)
             {
                 for (int c = 0; c < 256; c++)
                 {
@@ -836,11 +838,11 @@ class OPNABase : public OPNBase
                     if (c < 0x40) v = c * 2 + 0x80;
                     else if (c < 0xc0) v = 0x7f - (c - 0x40) * 2 + 0x80;
                     else v = (c - 0xc0) * 2;
-                    pmtable[c] = c;
+                    pmtable_opna[c] = c;
 
                     if (c < 0x80) v = 0xff - c * 2;
                     else v = (c - 0x80) * 2;
-                    amtable[c] = v & ~3;
+                    amtable_opna[c] = v & ~3;
                 }
             }
         }
@@ -919,7 +921,7 @@ class OPNABase : public OPNBase
                             DecodeADPCMB();
                             if (!adpcmplay)
                                 goto stop;
-                            s -= apout0 * std::max(adplc, t);
+                            s -= apout0 * my_max(adplc, t);
                             adplc -= t;
                         }
                         adplc -= 8192;
@@ -1200,5 +1202,5 @@ class OPNABase : public OPNBase
 
         fmgen::Channel4 ch[6];
 
-        static bool tablehasmade;
+        //static bool tablehasmade;
 };

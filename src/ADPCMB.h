@@ -1,15 +1,12 @@
 #pragma once
 
-#include "opna2.h"
-
-#ifndef my_max
-    #define my_max(a, b) ((a) > (b) ? (a) : (b))
-#endif
+#include "pantable_opna.h"
+#include "macros.h"
 
 class ADPCMB
 {
     public:
-        OPNA2* parent = NULL;
+        //OPNA2* parent = NULL;
 
         bool NO_BITTYPE_EMULATION = false;
 
@@ -133,7 +130,7 @@ class ADPCMB
                             DecodeADPCMB();
                             if (!adpcmplay)
                                 goto stop;
-                            s -= apout0 * std::max(adplc, t);
+                            s -= apout0 * my_max(adplc, t);
                             adplc -= t;
                         }
                         adplc -= 8192;
@@ -208,8 +205,8 @@ class ADPCMB
                     break;
 
                 case 0x07:
-                    panL = OPNA2::panTable[(data >> 6) & 0x3];
-                    panR = OPNA2::panTable[(data >> 4) & 0x3];
+                    panL = panTable_opna[(data >> 6) & 0x3];
+                    panR = panTable_opna[(data >> 4) & 0x3];
                     break;
 
                 case 0x08:      // ADPCM data

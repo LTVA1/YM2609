@@ -107,7 +107,7 @@ class Timer
         {
         }
 
-        uint8_t* regta = new uint8_t[2];
+        uint8_t regta[2];
 
         int timera, timera_count;
         int timerb, timerb_count;
