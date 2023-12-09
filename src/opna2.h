@@ -163,7 +163,7 @@ class OPNA2 : public OPNABase
 
             if (!SetRate(c, r, ipflag))
                 return false;
-            if (!OPNABase.Init(c, r, ipflag))
+            if (!OPNABase::Init(c, r, ipflag))
                 return false;
 
             Reset();

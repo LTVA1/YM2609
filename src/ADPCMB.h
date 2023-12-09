@@ -2,7 +2,9 @@
 
 #include "opna2.h"
 
-#define my_max(a, b) ((a) > (b) ? (a) : (b))
+#ifndef my_max
+    #define my_max(a, b) ((a) > (b) ? (a) : (b))
+#endif
 
 class ADPCMB
 {

@@ -288,7 +288,7 @@ class FM6
                     {
                         if ((addr & 0x100) != 0)
                             c += 3;
-                        SetParameter(ch[c], addr, data);
+                        SetParameter(ch[c], addr, data, c);
                     }
                     break;
             }
@@ -311,7 +311,7 @@ class FM6
         uint8_t regtc;
         uint32_t lfotable[8];
 
-        void SetParameter(fmvgen::Channel4 ch, uint32_t addr, uint32_t data)
+        void SetParameter(fmvgen::Channel4 ch, uint32_t addr, uint32_t data, int c)
         {
             uint32_t slottable[4] = { 0, 2, 1, 3 };
             uint8_t sltable[16]{
@@ -333,7 +333,7 @@ class FM6
                         break;
 
                     case 4: // 40-4E TL
-                        op.SetTL(data & 0x7f, ((regtc & 0x80) != 0) && (csmch == ch));
+                        op.SetTL(data & 0x7f, ((regtc & 0x80) != 0) && (c == 2));
                         op.SetWaveTypeH((uint8_t)(data >> 7));
                         break;
 
