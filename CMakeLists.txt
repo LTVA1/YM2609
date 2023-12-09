@@ -20,6 +20,9 @@ add_executable(
     src/psg2.h
     src/ADPCMA.h
     src/ADPCMB.h
+    src/opna.h
+    src/opna2.h
+    src/Timer.h
     ${EFF_DIR}/chorus.h
     ${EFF_DIR}/CRingBuffur.h
     ${EFF_DIR}/CMyFilter.h
