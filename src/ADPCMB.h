@@ -7,7 +7,7 @@
 class ADPCMB
 {
     public:
-        //OPNA2 parent = NULL;
+        OPNA2* parent = NULL;
 
         bool NO_BITTYPE_EMULATION = false;
 
@@ -34,7 +34,7 @@ class ADPCMB
         bool adpcmmask_;
         bool adpcmplay;     // ADPCM 再生中
 
-        ADPCMB(int num, reverb* reverb, distortion* distortion, chorus* chorus, HPFLPF* hpflpf, ReversePhase* reversePhase, Compressor* compressor, int efcCh)
+        ADPCMB(int num = 0, reverb* reverb = NULL, distortion* distortion = NULL, chorus* chorus = NULL, HPFLPF* hpflpf = NULL, ReversePhase* reversePhase = NULL, Compressor* compressor = NULL, int efcCh = 0)
         {
             this->num = num;
             this->reverb = reverb;

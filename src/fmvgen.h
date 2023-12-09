@@ -991,7 +991,7 @@ class fmvgen : public fmgen
 
             Operator op[4];
 
-            Channel4(int ch)
+            Channel4(int ch = 0)
             {
                 if (!tablehasmade)
                     MakeTable();

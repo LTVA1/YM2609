@@ -1,7 +1,6 @@
 #pragma once
 #include "fmgen.h"
 #include "Timer.h"
-#include "psg.h"
 #include "psg2.h"
 
 // ---------------------------------------------------------------------------
@@ -88,7 +87,7 @@ class OPNBase : public Timer
         {
             prescale = 0;
             psg = PSG();
-            chip = Chip();
+            chip = fmgen::Chip();
         }
 
         void SetPrescaler(uint32_t p)
@@ -130,7 +129,7 @@ class OPNBase : public Timer
             return true;
         }
 
-        void Reset() override
+        void Reset()
         {
             status = 0;
             SetPrescaler(0);
@@ -181,7 +180,7 @@ class OPNBase : public Timer
         int psg_db = 0;
 
     protected:
-        void SetParameter(fmgen::Channel4 ch, uint32_t addr, uint32_t data)
+        void SetParameter(fmgen::Channel4* ch, uint32_t addr, uint32_t data)
         {
             uint32_t slottable[4] = { 0, 2, 1, 3 };
             uint8_t sltable[16] = {
@@ -192,7 +191,7 @@ class OPNBase : public Timer
             if ((addr & 3) < 3)
             {
                 uint32_t slot = slottable[(addr >> 2) & 3];
-                fmgen::Operator op = ch.op[slot];
+                fmgen::Operator op = ch->op[slot];
 
                 switch ((addr >> 4) & 15)
                 {
@@ -246,7 +245,7 @@ class OPNBase : public Timer
         uint32_t rate;              // FM 音源合成レート
         uint32_t psgrate;           // FMGen  出力レート
         uint32_t status;
-        fmgen::Channel4 csmch;
+        fmgen::Channel4* csmch;
 
         uint32_t lfotable[8];
         uint8_t prescale;
@@ -257,8 +256,8 @@ class OPNBase : public Timer
         {
             if ((regtc & 0x80)!=0)
             {
-                csmch.KeyControl(0x00);
-                csmch.KeyControl(0x0f);
+                csmch->KeyControl(0x00);
+                csmch->KeyControl(0x0f);
             }
         }
 };
@@ -291,9 +290,9 @@ class OPNABase : public OPNBase
 
             for (int i = 0; i < 6; i++)
             {
-                ch[i] = new fmgen.Channel4();
+                ch[i] = fmgen::Channel4();
                 ch[i].SetChip(chip);
-                ch[i].SetType(fmgen.OpType.typeN);
+                ch[i].SetType((OpType)0);
             }
         }
 
@@ -377,7 +376,7 @@ class OPNABase : public OPNBase
         {
             c /= 2;     // 従来版との互換性を重視したけりゃコメントアウトしよう
 
-            Timer::Init(c, r);
+            OPNBase::Init(c, r);
 
             adplbase = (uint32_t)((int)(8192.0 * (clock / 72.0) / r));
             adpld = (int)(deltan * adplbase >> 16);
@@ -571,7 +570,7 @@ class OPNABase : public OPNBase
                     {
                         if ((addr & 0x100) != 0)
                             c += 3;
-                        base.SetParameter(ch[c], addr, data);
+                        OPNBase::SetParameter(&ch[c], addr, data);
                     }
                     break;
             }
@@ -635,7 +634,7 @@ class OPNABase : public OPNBase
                 case 0x0a:      // delta-N H
                     adpcmreg[addr - 0x09 + 4] = (uint8_t)data;
                     deltan = (uint32_t)(adpcmreg[5] * 256 + adpcmreg[4]);
-                    deltan = Math.Max(256, deltan);
+                    deltan = my_max(256, deltan);
                     adpld = (int)(deltan * adplbase >> 16);
                     break;
 
@@ -707,14 +706,14 @@ class OPNABase : public OPNBase
                 // 準備
                 // Set F-Number
                 if ((regtc & 0xc0) == 0)
-                    csmch.SetFNum(fnum[2]);// csmch - ch]);
+                    csmch->SetFNum(fnum[2]);// csmch - ch]);
                 else
                 {
                     // 効果音モード
-                    csmch.op[0].SetFNum(fnum3[1]);
-                    csmch.op[1].SetFNum(fnum3[2]);
-                    csmch.op[2].SetFNum(fnum3[0]);
-                    csmch.op[3].SetFNum(fnum[2]);
+                    csmch->op[0].SetFNum(fnum3[1]);
+                    csmch->op[1].SetFNum(fnum3[2]);
+                    csmch->op[2].SetFNum(fnum3[0]);
+                    csmch->op[3].SetFNum(fnum[2]);
                 }
 
                 int act = (((ch[2].Prepare() << 2) | ch[1].Prepare()) << 2) | ch[0].Prepare();
@@ -920,7 +919,7 @@ class OPNABase : public OPNBase
                             DecodeADPCMB();
                             if (!adpcmplay)
                                 goto stop;
-                            s -= apout0 * Math.Max(adplc, t);
+                            s -= apout0 * std::max(adplc, t);
                             adplc -= t;
                         }
                         adplc -= 8192;
@@ -1146,8 +1145,8 @@ class OPNABase : public OPNBase
             57,  57,  57,  57,  77, 102, 128, 153,
             };
 
-            adpcmx = fmgen.Limit(adpcmx + table1[data] * adpcmd / 8, 32767, -32768);
-            adpcmd = fmgen.Limit(adpcmd * table2[data] / 64, 24576, 127);
+            adpcmx = fmgen::Limit(adpcmx + table1[data] * adpcmd / 8, 32767, -32768);
+            adpcmd = fmgen::Limit(adpcmd * table2[data] / 64, 24576, 127);
             return adpcmx;
         }
 

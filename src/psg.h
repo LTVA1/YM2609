@@ -37,11 +37,11 @@
 class PSG
 {
     public:
-        const int noisetablesize = 1 << 11;   // ←メモリ使用量を減らしたいなら減らして
-        const int toneshift = 24;
-        const int envshift = 22;
-        const int noiseshift = 14;
-        const int oversampling = 2;       // ← 音質より速度が優先なら減らすといいかも
+        static const int noisetablesize = 1 << 11;   // ←メモリ使用量を減らしたいなら減らして
+        static const int toneshift = 24;
+        static const int envshift = 22;
+        static const int noiseshift = 14;
+        static const int oversampling = 2;       // ← 音質より速度が優先なら減らすといいかも
 
         int visVolume = 0;
 

@@ -55,7 +55,7 @@ class eq3band
         CMyFilter midL = CMyFilter(), midR = CMyFilter();
         CMyFilter highL = CMyFilter(), highR = CMyFilter(); // フィルタークラス(https://vstcpp.wpblog.jp/?page_id=728 より)
 
-
+    public:
     eq3band(int samplerate = 44100)
     {
         this->samplerate = samplerate;
@@ -63,12 +63,12 @@ class eq3band
         updateParam();
     }
 
-    void Mix(int* buffer, int nsamples)
+    void Mix(int** buffer, int nsamples)
     {
         for (int i = 0; i < nsamples; i++)
         {
-            fl = buffer[i * 2 + 0] / lowL.convInt;
-            fr = buffer[i * 2 + 1] / lowL.convInt;
+            fl = buffer[0][i * 2] / lowL.convInt;
+            fr = buffer[1][i * 2] / lowL.convInt;
 
 
             // inL[]、inR[]、outL[]、outR[]はそれぞれ入力信号と出力信号のバッファ(左右)
@@ -92,8 +92,8 @@ class eq3band
             }
 
 
-            buffer[i * 2 + 0] = (int)(fl * lowL.convInt);
-            buffer[i * 2 + 1] = (int)(fr * lowL.convInt);
+            buffer[0][i * 2] = (int)(fl * lowL.convInt);
+            buffer[1][i * 2] = (int)(fr * lowL.convInt);
         }
     }
 

@@ -43,7 +43,7 @@ class FM6
             }
         }
 
-        FM6(int n, reverb* reverb, distortion* distortion, chorus* chorus, HPFLPF* hpflpf, ReversePhase* reversePhase, Compressor* compressor, int efcStartCh)
+        FM6(int n = 0, reverb* reverb = NULL, distortion* distortion = NULL, chorus* chorus = NULL, HPFLPF* hpflpf = NULL, ReversePhase* reversePhase = NULL, Compressor* compressor = NULL, int efcStartCh = 0)
         {
             this->num = n;
             this->reverb = reverb;
@@ -54,13 +54,14 @@ class FM6
             this->efcStartCh = efcStartCh;
             this->compressor = compressor;
 
-            chip = Chip();
+            chip = fmvgen::Chip();
 
             for (int i = 0; i < 6; i++)
             {
-                ch[i] = Channel4(i + n * 6);
+                ch[i] = fmvgen::Channel4(i + n * 6);
                 ch[i].SetChip(chip);
-                ch[i].SetType(fmgen::OpType.typeN);
+                //ch[i].SetType(fmgen::OpType.typeN);
+                ch[i].SetType(0);
             }
 
             csmch = ch[2];
@@ -106,6 +107,9 @@ class FM6
 
             int c = (int)(addr & 3);
             uint32_t modified;
+
+            int cnt;
+            int d;
 
             switch (addr)
             {
@@ -164,8 +168,8 @@ class FM6
                         break;
                     }
 
-                    int cnt = wavecounter / 2;
-                    int d = wavecounter % 2;
+                    cnt = wavecounter / 2;
+                    d = wavecounter % 2;
 
                     uint32_t s;
                     if (d == 0) {
@@ -364,7 +368,7 @@ class FM6
             }
         }
 
-        protected void Mix6(int** buffer, int nsamples, int activech)
+        void Mix6(int** buffer, int nsamples, int activech)
         {
 
             // Mix
@@ -407,7 +411,7 @@ class FM6
             }
         }
 
-        protected void MixSubS(int activech, int* dest, int* buf)
+        void MixSubS(int activech, int* dest, int* buf)
         {
             int v;
             int L, R;

@@ -80,7 +80,7 @@ class PSG2 : public PSG
         uint8_t chenable[3];
         uint8_t nenable[3];
         uint32_t p[3];
-        const double ncountDiv = 32.0;
+        static constexpr const double ncountDiv = 32.0;
 
         void makeTblGetSample()
         {
@@ -150,7 +150,7 @@ class PSG2 : public PSG
 
     public:
 
-        PSG2(int num, reverb* rever, distortion* distort, chorus* chor, HPFLPF* hpflpf, ReversePhase* reversePhase, Compressor* compressor, int efcStartCh)
+        PSG2(int num = 0, reverb* rever = NULL, distortion* distort = NULL, chorus* chor = NULL, HPFLPF* hpflpf = NULL, ReversePhase* reversePhase = NULL, Compressor* compressor = NULL, int efcStartCh = 0)
         {
             this->num = num;
             this->rever = rever;

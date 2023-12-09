@@ -5,7 +5,7 @@
 class ADPCMA
 {
     public:
-        //OPNA2 parent = NULL;
+        OPNA2* parent = NULL;
 
         class Channel
         {
@@ -35,7 +35,7 @@ class ADPCMA
         uint8_t reg[32];
         static int16_t jedi_table[(48 + 1) * 16];
 
-        ADPCMA(int num, reverb* reverb, distortion* distortion, chorus* chorus, HPFLPF* hpflpf, ReversePhase* reversePhase, Compressor* compressor, int revStartCh)
+        ADPCMA(int num = 0, reverb* reverb = NULL, distortion* distortion = NULL, chorus* chorus = NULL, HPFLPF* hpflpf = NULL, ReversePhase* reversePhase = NULL, Compressor* compressor = NULL, int revStartCh = 0)
         {
             this->num = num;
             this->reversePhase = reversePhase;
