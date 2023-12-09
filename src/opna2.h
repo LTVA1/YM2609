@@ -190,13 +190,13 @@ class OPNA2 : public OPNABase
             adpcmb[p].adpcmbuf = _adpcmb;
         }
 
-        void setOperatorWave(uint8_t* buf)
+        void setOperatorWave(uint8_t* buf, uint32_t len)
         {
             int waveCh=0;
             int wavetype=0;
             int wavecounter = 0;
 
-            foreach (uint8_t b in buf)
+            for(uint32_t b = 0; b < len; b++)
             {
                 int cnt = wavecounter / 2;
                 int d = wavecounter % 2;
@@ -225,7 +225,7 @@ class OPNA2 : public OPNABase
             return fmvgen::sinetable[waveCh][wavetype];
         }
 
-        void setOperatorWaveDic(int n, uint8_t* buf)
+        void setOperatorWaveDic(int n, uint8_t* buf, uint32_t len)
         {
             int wavecounter = 0;
 
