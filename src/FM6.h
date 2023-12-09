@@ -48,7 +48,7 @@ class FM6
                 ch[i] = fmvgen::Channel4(i + n * 6);
                 ch[i].SetChip(chip);
                 //ch[i].SetType(fmgen::OpType.typeN);
-                ch[i].SetType(0);
+                ch[i].SetType((OpType)0);
             }
 
             csmch = ch[2];
@@ -606,7 +606,6 @@ class FM6
             chip.SetAML((uint32_t)(OPNA2::amtable[(lfocount >> (FM_LFOCBITS + 1)) & 0xff]));
             lfocount += lfodcount;
         }
-        
     private:
         reverb* reverb;
         distortion* distortion;
