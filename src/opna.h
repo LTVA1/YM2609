@@ -176,7 +176,7 @@ class OPNBase : public Timer
         {
         }    // obsolete
 
-        int visVolume[2] = { 0, 0 };
+        //int visVolume[2] = { 0, 0 };
 
         PSG psg;
         int psg_db = 0;
@@ -760,12 +760,12 @@ class OPNABase : public OPNBase
                 int v = ((fmgen::Limit(ibuf[2] + ibuf[3], 0x7fff, -0x8000) * fmvolume) >> 14);
                 //int v = fmgen.Limit((ibuf[2] + ibuf[3]) , 0x7fff, -0x8000);
                 fmgen::StoreSample(buffer[0][dest], v);// ((fmgen.Limit(ibuf[2] + ibuf[3], 0x7fff, -0x8000) * fmvolume) >> 14));
-                visVolume[0] = v;
+                //visVolume[0] = v;
 
                 v = ((fmgen::Limit(ibuf[1] + ibuf[3], 0x7fff, -0x8000) * fmvolume) >> 14);
                 //v = fmgen.Limit((ibuf[1] + ibuf[3]) , 0x7fff, -0x8000);
                 fmgen::StoreSample(buffer[1][dest], v);// ((fmgen.Limit(ibuf[1] + ibuf[3], 0x7fff, -0x8000) * fmvolume) >> 14));
-                visVolume[1] = v;
+                //visVolume[1] = v;
             }
         }
 

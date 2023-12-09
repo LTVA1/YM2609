@@ -94,7 +94,7 @@ class fmgen
                     int h, l;
 
                     // PG Part
-                    float* dt2lv=new float[4]{ 1.0f, 1.414f, 1.581f, 1.732f };
+                    float dt2lv[4] = { 1.0f, 1.414f, 1.581f, 1.732f };
 
                     for (h = 0; h < 4; h++)
                     {
@@ -106,8 +106,6 @@ class fmgen
                             multable_[h][l] = (uint32_t)(mul * rr);
                         }
                     }
-
-                    delete[] dt2lv;
                 }
             
             public:
@@ -489,7 +487,7 @@ class fmgen
                         // SSG-EG
                         if (ssg_type_!=0 && (eg_phase_ != EGPhase::release))
                         {
-                            int m = ar_ >= ((ssg_type_ == 8 || ssg_type_ == 12) ? 56 : 60) ? 1 : 0;
+                            int m = (ar_ >= ((ssg_type_ == 8 || ssg_type_ == 12) ? 56 : 60) ? 1 : 0);
 
                             //assert(0 <= ssg_phase_ && ssg_phase_ <= 2);
                             int phase = (ssg_phase_ >= 0 && ssg_phase_ <= 2) ? ssg_phase_ : 0;
@@ -521,7 +519,7 @@ class fmgen
                                 if (ssg_phase_ > 2)
                                     ssg_phase_ = 1;
 
-                                int m = ar_ >= ((ssg_type_ == 8 || ssg_type_ == 12) ? 56 : 60) ? 1 : 0;
+                                int m = (ar_ >= ((ssg_type_ == 8 || ssg_type_ == 12) ? 56 : 60) ? 1 : 0);
 
                                 //assert(0 <= ssg_phase_ && ssg_phase_ <= 2);
                                 int phase = (ssg_phase_ >= 0 && ssg_phase_ <= 2) ? ssg_phase_ : 0;
@@ -1105,16 +1103,23 @@ class fmgen
                     //if (!tablehasmade)
                         MakeTable();
 
+                    op = new Operator[4]{
+                        Operator(),Operator(),Operator(),Operator()
+                    };
+
                     SetAlgorithm(0);
                     pms = pmtable[0][0];
 
-                    op = new Operator[4] {
-                        Operator(),Operator(),Operator(),Operator()
-                    };
+                    
 
                     //buf = new int[4];
                     //In = new int[3];          // 各 OP の入力ポインタ
                     //Out = new int[3]; 
+                }
+
+                ~Channel4()
+                {
+                    delete[] op;
                 }
 
                 void MakeTable()
@@ -1201,15 +1206,15 @@ class fmgen
                 //	アルゴリズムを設定
                 void SetAlgorithm(uint32_t algo)
                 {
-                    uint8_t** table1 = new uint8_t*[8] {
-                        new uint8_t[6] { 0, 1, 1, 2, 2, 3 },
-                        new uint8_t[6] { 1, 0, 0, 1, 1, 2 },
-                        new uint8_t[6] { 1, 1, 1, 0, 0, 2 },
-                        new uint8_t[6] { 0, 1, 2, 1, 1, 2 },
-                        new uint8_t[6] { 0, 1, 2, 2, 2, 1 },
-                        new uint8_t[6] { 0, 1, 0, 1, 0, 1 },
-                        new uint8_t[6] { 0, 1, 2, 1, 2, 1 },
-                        new uint8_t[6] { 1, 0, 1, 0, 1, 0 }
+                    uint8_t table1[8][6] = {
+                        { 0, 1, 1, 2, 2, 3 },
+                        { 1, 0, 0, 1, 1, 2 },
+                        { 1, 1, 1, 0, 0, 2 },
+                        { 0, 1, 2, 1, 1, 2 },
+                        { 0, 1, 2, 2, 2, 1 },
+                        { 0, 1, 0, 1, 0, 1 },
+                        { 0, 1, 2, 1, 2, 1 },
+                        { 1, 0, 1, 0, 1, 0 },
                     };
 
                     In[0] = table1[algo][0];
@@ -1506,9 +1511,9 @@ class fmgen
             //	1.000963
             //	lfofref[level * max * wave];
             //	pre = lfofref[level][pms * wave >> 8];
-            uint8_t** amt = new uint8_t*[2] {
-                new uint8_t[4] { 31, 6, 4, 3 }, // OPNA
-                new uint8_t[4] { 31, 2, 1, 0 } //	OPM
+            uint8_t amt[2][4] = {
+                { 31, 6, 4, 3 }, // OPNA
+                { 31, 2, 1, 0 }, //	OPM
             };
 
             for (int type = 0; type < 2; type++)
