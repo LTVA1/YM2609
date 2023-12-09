@@ -40,6 +40,9 @@ class OPNA2 : public OPNABase
             this->reversePhase = reversePhase;
             this->compressor = compressor;
 
+            fm6 = new FM6[2];
+            psg2 = new PSG2[4];
+
             for(int i = 0; i < 2; i++)
             {
                 fm6[i] = FM6(0, reverb, distortion, chorus, hpflpf,reversePhase,compressor, i * 6);
@@ -115,6 +118,9 @@ class OPNA2 : public OPNABase
                     adpcmb[i].adpcmbuf = NULL;
                 }
             }
+
+            delete[] fm6;
+            delete[] psg2;
         }
 
         class Rhythm
@@ -794,8 +800,8 @@ class OPNA2 : public OPNABase
         }
 
     protected:
-        FM6 fm6[2];
-        PSG2 psg2[4];
+        FM6* fm6;
+        PSG2* psg2;
         ADPCMB adpcmb[3];
         ADPCMA adpcma;
 
