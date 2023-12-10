@@ -56,7 +56,6 @@ int main()
     int i = 0;
     std::cin >> i;
 
-    delete opna2;
     delete rev;
     delete dist;
     delete chor;
@@ -68,6 +67,8 @@ int main()
     delete[] buffer[0];
     delete[] buffer[1];
     delete[] buffer;
+
+    delete opna2;
 
     return 0;
 }
