@@ -276,7 +276,7 @@ class FM6
                     {
                         if ((addr & 0x100) != 0)
                             c += 3;
-                        SetParameter(ch[c], addr, data, c);
+                        SetParameter(&ch[c], addr, data, c);
                     }
                     break;
             }
@@ -299,7 +299,7 @@ class FM6
         uint8_t regtc;
         uint32_t lfotable[8];
 
-        void SetParameter(fmvgen::Channel4 ch, uint32_t addr, uint32_t data, int c)
+        void SetParameter(fmvgen::Channel4* ch, uint32_t addr, uint32_t data, int c)
         {
             uint32_t slottable[4] = { 0, 2, 1, 3 };
             uint8_t sltable[16]{
@@ -310,7 +310,7 @@ class FM6
             if ((addr & 3) < 3)
             {
                 uint32_t slot = slottable[(addr >> 2) & 3];
-                fmvgen::Operator op = ch.op[slot];
+                fmvgen::Operator op = ch->op[slot];
 
                 switch ((addr >> 4) & 15)
                 {
@@ -350,7 +350,7 @@ class FM6
                     case 9: // 90-9E SSG-EC
                         op.SetSSGEC(data & 0x0f);
                         op.SetALGLink(data >> 4);
-                        ch.buildAlg();
+                        ch->buildAlg();
                         break;
                 }
             }

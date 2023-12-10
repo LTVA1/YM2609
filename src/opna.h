@@ -293,8 +293,8 @@ class OPNABase : public OPNBase
             for (int i = 0; i < 6; i++)
             {
                 ch[i] = fmgen::Channel4();
-                ch[i].SetChip(chip);
-                ch[i].SetType((OpType)0);
+               // ch[i].SetChip(chip);
+                //ch[i].SetType((OpType)0);
             }
         }
 

@@ -92,6 +92,8 @@ class OPNA2 : public OPNABase
 
             csmch = &ch[2];
             this->chipID = ChipID;
+
+            prescale = 1;
         }
 
         ~OPNA2()
@@ -189,8 +191,8 @@ class OPNA2 : public OPNABase
 
             if (!SetRate(c, r, ipflag))
                 return false;
-            if (!OPNABase::Init(c, r, ipflag))
-                return false;
+            //if (!OPNABase::Init(c, r, ipflag))
+                //return false;
 
             Reset();
 
@@ -344,7 +346,7 @@ class OPNA2 : public OPNABase
             reg29 = 0x1f;
             rhythmkey = 0;
             limitaddr = 0x3ffff;
-            OPNABase::Reset();
+            //OPNABase::Reset();
 
             SetPrescaler(0);
 
@@ -370,7 +372,7 @@ class OPNA2 : public OPNABase
 
         void SetPrescaler(uint32_t p)
         {
-            OPNABase::SetPrescaler(p);
+            //OPNABase::SetPrescaler(p);
 
             int8_t table[3][2] = { { 6, 4 }, { 3, 2 }, { 2, 1 }, };
             uint8_t table2[8] = { 108, 77, 71, 67, 62, 44, 8, 5 };

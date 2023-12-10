@@ -987,10 +987,13 @@ class fmvgen : public fmgen
         public:
             static constexpr const uint8_t fbtable[8] = { 31, 7, 6, 5, 4, 3, 2, 1 };
 
-            Operator op[4];
+            fmvgen::Operator* op = NULL;
+            bool op_allocated = false;
 
             Channel4(int ch = 0)
             {
+                op = new fmvgen::Operator[4];
+                op_allocated = true;
                 //if (!tablehasmade)
                     MakeTable();
 
@@ -1001,6 +1004,16 @@ class fmvgen : public fmgen
                 for(int i = 0; i < 4; i++)
                 {
                     op[i] = fmvgen::Operator();
+                }
+            }
+
+            ~Channel4()
+            {
+                if (op_allocated)
+                {
+                   //delete[] op;
+                   op = NULL; //TODO: investigate why the fuck it doesn't work!! CrtHeapAssertion fails idk, maybe pointer is already freed?
+                   op_allocated = false;
                 }
             }
 

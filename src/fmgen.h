@@ -1101,14 +1101,14 @@ class fmgen
                 {
                     //tablehasmade = false;
                     //if (!tablehasmade)
-                        MakeTable();
+                        //MakeTable();
 
-                    op = new Operator[4]{
-                        Operator(),Operator(),Operator(),Operator()
-                    };
+                    //op = new fmgen::Operator[4]{
+                       //fmgen::Operator(),fmgen::Operator(),fmgen::Operator(),fmgen::Operator()
+                    //};
 
-                    SetAlgorithm(0);
-                    pms = pmtable[0][0];
+                    //SetAlgorithm(0);
+                    //pms = pmtable[0][0];
 
                     
 
@@ -1119,7 +1119,7 @@ class fmgen
 
                 ~Channel4()
                 {
-                    delete[] op;
+                   // delete[] op;
                 }
 
                 void MakeTable()

@@ -47,6 +47,8 @@ int main()
     //OPNA2* opna2 = new OPNA2(0, new reverb(44100 * 4, 39), new distortion(8000000, 39), new chorus(8000000, 39), new eq3band(44100), new HPFLPF(8000000, 39), new ReversePhase(), new Compressor(44100, 39));
     OPNA2* opna2 = new OPNA2(0, rev, dist, chor, eq, filt, reph, comp);
 
+    opna2->Init(8000000, 8000000);
+
     std::cout << buffer[0][30] << std::endl;
 
     int i = 0;
