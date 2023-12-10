@@ -174,18 +174,18 @@ class OPNA2 : public OPNABase
             //LoadRhythmSample(appendFileReaderCallback);
             //dicOpeWav.Clear();
 
-            if (adpcmb[0].adpcmbuf == NULL)
+            //if (adpcmb[0].adpcmbuf == NULL)
                 adpcmb[0].adpcmbuf = new uint8_t[0x40000];
-            if (adpcmb[0].adpcmbuf == NULL)
-                return false;
-            if (adpcmb[1].adpcmbuf == NULL)
+            //if (adpcmb[0].adpcmbuf == NULL)
+                //return false;
+            //if (adpcmb[1].adpcmbuf == NULL)
                 adpcmb[1].adpcmbuf = new uint8_t[0x1000000];
-            if (adpcmb[1].adpcmbuf == NULL)
-                return false;
-            if (adpcmb[2].adpcmbuf == NULL)
+            //if (adpcmb[1].adpcmbuf == NULL)
+                //return false;
+           // if (adpcmb[2].adpcmbuf == NULL)
                 adpcmb[2].adpcmbuf = new uint8_t[0x1000000];
-            if (adpcmb[2].adpcmbuf == NULL)
-                return false;
+            //if (adpcmb[2].adpcmbuf == NULL)
+               // return false;
 
             setAdpcmA(_adpcma, _adpcma_size);
 

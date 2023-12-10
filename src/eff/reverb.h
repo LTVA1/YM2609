@@ -35,10 +35,10 @@ class reverb
 
         ~reverb()
         {
-            delete Buf[0];
-            delete Buf[1];
+            delete[] Buf[0];
+            delete[] Buf[1];
 
-            delete[] sl;
+            delete[] SendLevel;
         }
 
         void initParams()

@@ -56,7 +56,14 @@ int main()
     int i = 0;
     std::cin >> i;
 
-    //delete opna2;
+    delete opna2;
+    delete rev;
+    delete dist;
+    delete chor;
+    delete eq;
+    delete filt;
+    delete reph;
+    delete comp;
 
     delete[] buffer[0];
     delete[] buffer[1];
