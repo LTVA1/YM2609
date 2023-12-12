@@ -105,6 +105,11 @@ class OPNA2 /*: public OPNABase*/
                 delete[] rhythm[i].sample;
                 rhythm[i].sample = NULL;
             }
+
+            for (int i = 0; i < 2; i++)
+            {
+                fm6[i].fm6_free();
+            }
             
             if(adpcma.buf != NULL)
             {

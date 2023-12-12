@@ -1172,14 +1172,19 @@ class fmvgen /*: public fmgen*/
                 }
             }
 
-            ~Channel4() //TODO: it calls destructor when object goes out of scope???? this happens when initialization loop ends???
+            void channel4_free()
             {
-                /*if (op_allocated)
+                if (op_allocated)
                 {
                    delete[] op;
                    op = NULL;
                    op_allocated = false;
-                }*/
+                }
+            }
+
+            ~Channel4()
+            {
+                
             }
 
             void MakeTable()

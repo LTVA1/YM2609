@@ -65,6 +65,19 @@ class FM6
             csmch = 2;
         }
 
+        ~FM6()
+        {
+            
+        }
+
+        void fm6_free()
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                ch[i].channel4_free();
+            }
+        }
+
         void Mix(int** buffer, int nsamples, uint8_t regtc)
         {
             if (fmvolume <= 0) return;
