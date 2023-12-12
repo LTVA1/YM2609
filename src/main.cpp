@@ -49,6 +49,8 @@ int main()
 
     opna2->Init(8000000, 8000000);
 
+    opna2->Reset();
+
     opna2->Mix(buffer, 200);
 
     std::cout << buffer[0][30] << std::endl;
