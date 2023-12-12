@@ -1150,7 +1150,12 @@ class fmvgen /*: public fmgen*/
             fmvgen::Operator* op = NULL;
             bool op_allocated = false;
 
-            Channel4(int ch = 0)
+            Channel4()
+            {
+                op_allocated = false;
+            }
+
+            Channel4(int ch)
             {
                 op = new fmvgen::Operator[4];
                 op_allocated = true;
@@ -1167,7 +1172,7 @@ class fmvgen /*: public fmgen*/
                 }
             }
 
-            ~Channel4()
+            ~Channel4() //TODO: it calls destructor when object goes out of scope???? this happens when initialization loop ends???
             {
                 /*if (op_allocated)
                 {

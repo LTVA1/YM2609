@@ -150,7 +150,12 @@ class PSG2 : public PSG
 
     public:
 
-        PSG2(int num = 0, reverb* rever = NULL, distortion* distort = NULL, chorus* chor = NULL, HPFLPF* hpflpf = NULL, ReversePhase* reversePhase = NULL, Compressor* compressor = NULL, int efcStartCh = 0)
+        PSG2()
+        {
+            
+        }
+
+        PSG2(int num, reverb* rever = NULL, distortion* distort = NULL, chorus* chor = NULL, HPFLPF* hpflpf = NULL, ReversePhase* reversePhase = NULL, Compressor* compressor = NULL, int efcStartCh = 0)
         {
             this->num = num;
             this->rever = rever;

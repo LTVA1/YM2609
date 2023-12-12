@@ -36,7 +36,12 @@ class FM6
             }
         }
 
-        FM6(int n = 0, reverb* rever = NULL, distortion* distort = NULL, chorus* chor = NULL, HPFLPF* hpflpf = NULL, ReversePhase* reversePhase = NULL, Compressor* compressor = NULL, int efcStartCh = 0)
+        FM6()
+        {
+
+        }
+
+        FM6(int n, reverb* rever = NULL, distortion* distort = NULL, chorus* chor = NULL, HPFLPF* hpflpf = NULL, ReversePhase* reversePhase = NULL, Compressor* compressor = NULL, int efcStartCh = 0)
         {
             this->num = n;
             this->reverb = rever;
