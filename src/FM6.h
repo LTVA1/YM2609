@@ -2,6 +2,8 @@
 
 #include "pantable_opna.h"
 #include "macros.h"
+#include "Timer.h"
+#include "fmvgen.h"
 
 class FM6
 {
@@ -10,7 +12,10 @@ class FM6
 
         int fmvolume;
         fmvgen::Channel4 ch[6];
-        fmvgen::Chip chip;
+        Chip chip;
+
+        Timer tim;
+
         int wavetype = 0;
         int waveCh = 0;
         int wavecounter = 0;
@@ -42,7 +47,7 @@ class FM6
             this->efcStartCh = efcStartCh;
             this->compressor = compressor;
 
-            chip = fmvgen::Chip();
+            chip = Chip();
 
             for (int i = 0; i < 6; i++)
             {
@@ -52,7 +57,7 @@ class FM6
                 ch[i].SetType((OpType)0);
             }
 
-            csmch = ch[2];
+            csmch = 2;
         }
 
         void Mix(int** buffer, int nsamples, uint8_t regtc)
@@ -62,15 +67,16 @@ class FM6
             this->regtc = regtc;
             // 準備
             // Set F-Number
-            if ((regtc & 0xc0) == 0)
-                csmch.SetFNum(fnum[2]);// csmch - ch]);
+            if ((tim.regtc & 0xc0) == 0)
+                ch[csmch].SetFNum(fnum[2]);// csmch - ch]);
+                //ch[2].SetFNum(fnum[2]);
             else
             {
                 // 効果音モード
-                csmch.op[0].SetFNum(fnum3[1]);
-                csmch.op[1].SetFNum(fnum3[2]);
-                csmch.op[2].SetFNum(fnum3[0]);
-                csmch.op[3].SetFNum(fnum[2]);
+                ch[csmch].op[0].SetFNum(fnum3[1]);
+                ch[csmch].op[1].SetFNum(fnum3[2]);
+                ch[csmch].op[2].SetFNum(fnum3[0]);
+                ch[csmch].op[3].SetFNum(fnum[2]);
             }
 
             int act = (((ch[2].Prepare() << 2) | ch[1].Prepare()) << 2) | ch[0].Prepare();
@@ -82,7 +88,6 @@ class FM6
             if ((act & 0x555) == 0) return;
 
             Mix6(buffer, nsamples, act);
-
         }
 
         // ---------------------------------------------------------------------------
@@ -103,18 +108,18 @@ class FM6
             {
 
                 // Timer -----------------------------------------------------------------
-                /*case 0x24:
+                case 0x24:
                 case 0x25:
-                    parent->SetTimerA(addr, data);
+                    tim.SetTimerA(addr, data);
                     break;
 
                 case 0x26:
-                    parent->SetTimerB(data);
+                    tim.SetTimerB(data);
                     break;
 
                 case 0x27:
-                    parent->SetTimerControl(data);
-                    break;*/
+                    tim.SetTimerControl(data);
+                    break;
 
                 // Misc ------------------------------------------------------------------
                 case 0x28:      // Key On/Off
@@ -283,7 +288,7 @@ class FM6
         }
 
     protected:
-        fmvgen::Channel4 csmch;
+        uint8_t csmch;
         uint32_t fnum[6];
         uint32_t fnum3[3];
         uint8_t fnum2[9];
@@ -619,5 +624,14 @@ class FM6
 
         int ibuf[4];
         int idest[6];
+
+        void TimerA() //TODO:: add REAL CSM mode functionality (reset envelope too)
+        {
+            if ((tim.regtc & 0x80)!=0)
+            {
+                ch[csmch].KeyControl(0x00);
+                ch[csmch].KeyControl(0x0f);
+            }
+        }
 
 };

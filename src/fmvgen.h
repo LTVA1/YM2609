@@ -1,32 +1,193 @@
 #pragma once
-#include "fmgen.h"
+//#include "fmgen.h"
 
 #include "pantable_opna.h"
 
-class fmvgen : public fmgen
+//	Chip resource
+
+//int*** pmtable = NULL;
+//uint32_t*** amtable = NULL;
+int pmtable[2][8][FM_LFOENTS];
+uint32_t amtable[2][4][FM_LFOENTS];
+bool tablemade = false;
+
+enum OpType : int
+{
+    typeN = 0,
+    typeM = 1
+};
+
+class Chip
+{
+    private:
+        uint32_t ratio_;
+        uint32_t aml_;
+        uint32_t pml_;
+        int pmv_;
+        uint32_t multable_[4][16];
+        void MakeTable()
+        {
+            int h, l;
+
+            // PG Part
+            float dt2lv[4] = { 1.0f, 1.414f, 1.581f, 1.732f };
+
+            for (h = 0; h < 4; h++)
+            {
+                //assert(2 + FM_RATIOBITS - FM_PGBITS >= 0);
+                double rr = dt2lv[h] * (double)(ratio_) / (1 << (2 + FM_RATIOBITS - FM_PGBITS));
+                for (l = 0; l < 16; l++)
+                {
+                    int mul = l>0 ? l * 2 : 1;
+                    multable_[h][l] = (uint32_t)(mul * rr);
+                }
+            }
+        }
+    
+    public:
+        OpType optype_;
+
+        // ---------------------------------------------------------------------------
+        //	チップ内で共通な部分
+        //
+        //Chip::Chip()
+        //: ratio_(0), aml_(0), pml_(0), pmv_(0), optype_(typeN)
+        //{
+        //}
+        Chip()
+        {
+            ratio_ = 0;
+            aml_ = 0;
+            pml_ = 0;
+            pmv_ = 0;
+            optype_ = OpType::typeN;
+        }
+
+        //	クロック・サンプリングレート比に依存するテーブルを作成
+        void SetRatio(uint32_t ratio)
+        {
+            if (ratio_ != ratio)
+            {
+                ratio_ = ratio;
+                MakeTable();
+            }
+        }
+
+        // ---------------------------------------------------------------------------
+        //	AM のレベルを設定
+        void SetAML(uint32_t l)
+        {
+            aml_ = l & (FM_LFOENTS - 1);
+        }
+
+        //	PM のレベルを設定
+        void SetPML(uint32_t l)
+        {
+            pml_ = l & (FM_LFOENTS - 1);
+        }
+
+        void SetPMV(int pmv)
+        {
+            pmv_ = pmv;
+        }
+
+        uint32_t GetMulValue(uint32_t dt2, uint32_t mul)
+        {
+            return multable_[dt2][mul];
+        }
+
+        uint32_t GetAML()
+        {
+            return aml_;
+        }
+
+        uint32_t GetPML()
+        {
+            return pml_;
+        }
+
+        int GetPMV()
+        {
+            return pmv_;
+        }
+
+        uint32_t GetRatio()
+        {
+            return ratio_;
+        }
+};
+
+class fmvgen /*: public fmgen*/
 {
     public:
         const int waveChSize = 12;
         const static int waveTypeSize = 4;
         const static int waveBufSize = 1024;
 
-        /* = new uint32_t[12][][]{
-            new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] },
-            new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] },
-            new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] },
-            new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] },
-            new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] },
-            new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] },
-            new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] },
-            new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] },
-            new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] },
-            new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] },
-            new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] },
-            new uint32_t[4][] { new uint32_t[1024], new uint32_t[1024], new uint32_t[1024], new uint32_t[1024] }
-        };*/
+        static void StoreSample(int& dest, int data)
+        {
+            dest = (int)Limit(dest + data, 0x7fff, -0x8000);
+        }
+
+        static int Limit(int v, int max, int min)
+        {
+            return v > max ? max : (v < min ? min : v);
+        }
+
+        static void MakeLFOTable()
+        {
+            if (tablemade)
+                return;
+
+            tablemade = true;
+
+            int i;
+
+            double pms[2][8] =  {
+            {  0, 1/360.0, 2/360.0, 3/360.0,  4/360.0,  6/360.0, 12/360.0,  24/360.0, },	// OPNA
+            //		{ 0, 1/240., 2/240., 4/240., 10/240., 20/240., 80/240., 140/240., },	// OPM
+            { 0, 1/480.0, 2/480.0, 4/480.0, 10/480.0, 20/480.0, 80/480.0, 140/480.0, }    // OPM
+            //		{ 0, 1/960., 2/960., 4/960., 10/960., 20/960., 80/960., 140/960., },	// OPM
+            };
+            //		 3		 6,      12      30       60       240      420		/ 720
+            //	1.000963
+            //	lfofref[level * max * wave];
+            //	pre = lfofref[level][pms * wave >> 8];
+            uint8_t amt[2][4] = {
+                { 31, 6, 4, 3 }, // OPNA
+                { 31, 2, 1, 0 }, //	OPM
+            };
+
+            for (int type = 0; type < 2; type++)
+            {
+                for (i = 0; i < 8; i++)
+                {
+                    double pmb = pms[type][i];
+                    for (int j = 0; j < FM_LFOENTS; j++)
+                    {
+                        double v = pow(2.0, pmb * (2 * j - FM_LFOENTS + 1) / (FM_LFOENTS - 1));
+                        double w = 0.6 * pmb * sin(2 * j * 3.14159265358979323846 / FM_LFOENTS) + 1;
+                        //				pmtable[type][i][j] = int(0x10000 * (v - 1));
+                        //				if (type == 0)
+                        pmtable[type][i][j] = (int)(0x10000 * (w - 1));
+                        //				else
+                        //					pmtable[type][i][j] = int(0x10000 * (v - 1));
+
+                        //				printf("pmtable[%d][%d][%.2x] = %5d  %7.5f %7.5f\n", type, i, j, pmtable[type][i][j], v, w);
+                    }
+                }
+                for (i = 0; i < 4; i++)
+                {
+                    for (int j = 0; j < FM_LFOENTS; j++)
+                    {
+                        amtable[type][i][j] = (uint32_t)(((j * 4) >> amt[type][i]) * 2) << 2;
+                    }
+                }
+            }
+        }
 
         //	Operator -------------------------------------------------------------
-        class Operator : fmgen::Operator
+        class Operator /*: fmgen::Operator*/
         {
             public:
                 static constexpr const uint8_t notetable[128] =
@@ -176,8 +337,7 @@ class fmvgen : public fmgen
                 // ---------------------------------------------------------------------------
                 //	Operator
                 //
-                //bool tablehasmade = false;
-                //uint32_t[] sinetable = new uint32_t[1024];
+                
                 int cltable[FM_CLENTS];
 
                 OpType type_;       // OP の種類 (M, N...)
@@ -979,7 +1139,7 @@ class fmvgen : public fmgen
         }
     }
 
-    class Channel4 : fmgen::Channel4
+    class Channel4 /* : fmgen::Channel4*/
     {
         // ---------------------------------------------------------------------------
         //	4-op Channel
@@ -1003,18 +1163,18 @@ class fmvgen : public fmgen
 
                 for(int i = 0; i < 4; i++)
                 {
-                    op[i] = fmvgen::Operator();
+                    //op[i] = fmvgen::Operator();
                 }
             }
 
             ~Channel4()
             {
-                if (op_allocated)
+                /*if (op_allocated)
                 {
-                   //delete[] op;
-                   op = NULL; //TODO: investigate why the fuck it doesn't work!! CrtHeapAssertion fails idk, maybe pointer is already freed?
+                   delete[] op;
+                   op = NULL;
                    op_allocated = false;
-                }
+                }*/
             }
 
             void MakeTable()

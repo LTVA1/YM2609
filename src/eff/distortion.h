@@ -38,7 +38,6 @@ class distortion
         ~distortion()
         {
             delete[] chInfo;
-            //delete[] fbuf;
         }
 
         void Init()

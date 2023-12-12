@@ -67,8 +67,8 @@ class eq3band
     {
         for (int i = 0; i < nsamples; i++)
         {
-            fl = buffer[0][i * 2] / lowL.convInt;
-            fr = buffer[1][i * 2] / lowL.convInt;
+            fl = buffer[0][i] / lowL.convInt;
+            fr = buffer[1][i] / lowL.convInt;
 
 
             // inL[]、inR[]、outL[]、outR[]はそれぞれ入力信号と出力信号のバッファ(左右)
@@ -92,8 +92,8 @@ class eq3band
             }
 
 
-            buffer[0][i * 2] = (int)(fl * lowL.convInt);
-            buffer[1][i * 2] = (int)(fr * lowL.convInt);
+            buffer[0][i] = (int)(fl * lowL.convInt);
+            buffer[1][i] = (int)(fr * lowL.convInt);
         }
     }
 

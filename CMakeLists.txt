@@ -14,13 +14,13 @@ set(EFF_DIR src/eff)
 add_executable(
     Project 
     src/main.cpp
-    src/fmgen.h
+    # src/fmgen.h
     src/fmvgen.h
     src/psg.h
     src/psg2.h
     src/ADPCMA.h
     src/ADPCMB.h
-    src/opna.h
+    # src/opna.h
     src/opna2.h
     src/Timer.h
     src/macros.h

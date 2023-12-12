@@ -1,5 +1,6 @@
 #pragma once
-#include "opna.h"
+//#include "opna.h"
+#include "Timer.h"
 
 #include "eff/chorus.h"
 #include "eff/Compressor.h"
@@ -19,7 +20,7 @@
 #include "macros.h"
 
 //	YM2609(OPNA2) ---------------------------------------------------
-class OPNA2 : public OPNABase
+class OPNA2 /*: public OPNABase*/
 {
     //プリセット保持向け
     //public List<uint8_t[]> presetRhythmPCMData = NULL;
@@ -90,7 +91,6 @@ class OPNA2 : public OPNABase
                 //adpcmb[i].parent = this;
             }
 
-            csmch = &ch[2];
             this->chipID = ChipID;
 
             prescale = 1;
@@ -98,7 +98,7 @@ class OPNA2 : public OPNABase
 
         ~OPNA2()
         {
-            adpcmbuf = NULL;
+            //adpcmbuf = NULL;
 
             for (int i = 0; i < 6; i++)
             {
@@ -293,8 +293,8 @@ class OPNA2 : public OPNABase
         //
         bool SetRate(uint32_t c, uint32_t r, bool ipflag = false)
         {
-            if (!OPNABase::SetRate(c, r, ipflag))
-                return false;
+            //if (!OPNABase::SetRate(c, r, ipflag))
+                //return false;
 
             RebuildTimeTable();
             for (int i = 0; i < 6; i++)
@@ -320,8 +320,8 @@ class OPNA2 : public OPNABase
         void Mix(int** buffer, int nsamples)
         {
 
-            fm6[0].Mix(buffer, nsamples, regtc);
-            fm6[1].Mix(buffer, nsamples, regtc);
+            fm6[0].Mix(buffer, nsamples, fm6[0].tim.regtc);
+            fm6[1].Mix(buffer, nsamples, fm6[1].tim.regtc);
             psg2[0].Mix(buffer, nsamples);
             psg2[1].Mix(buffer, nsamples);
             psg2[2].Mix(buffer, nsamples);
@@ -343,7 +343,7 @@ class OPNA2 : public OPNABase
         //
         void Reset()
         {
-            reg29 = 0x1f;
+            //reg29 = 0x1f;
             rhythmkey = 0;
             limitaddr = 0x3ffff;
             //OPNABase::Reset();
@@ -390,7 +390,8 @@ class OPNA2 : public OPNABase
                 //assert(fmclock< (0x80000000 >> FM_RATIOBITS));
                 uint32_t ratio = ((fmclock << FM_RATIOBITS) + rate / 2) / rate;
 
-                SetTimerBase(fmclock);
+                fm6[0].tim.SetTimerBase(fmclock);
+                fm6[1].tim.SetTimerBase(fmclock);
                 //		MakeTimeTable(ratio);
                 fm6[0].chip.SetRatio(ratio);
                 fm6[1].chip.SetRatio(ratio);
@@ -517,59 +518,11 @@ class OPNA2 : public OPNABase
 
             if (addr < 0x200)
             {
-                if(addr == 0x24 || addr == 0x25) //TODO: we have only ONE TIMER 
-                {
-                    SetTimerA(addr, data); //a hack to not reference OPNA2 methods in FM6.h... please kill me
-                }
-
-                else if(addr == 0x26)
-                {
-                    SetTimerB(data);
-                }
-
-                else if(addr == 0x27)
-                {
-                    SetTimerControl(data);
-                }
-
-                if(addr == 0x2d || addr == 0x2e || addr == 0x2f)
-                {
-                    SetPrescaler(addr - 0x2d);
-                }
-
-                else
-                {
-                    FmSetReg(0, addr, (uint8_t)data);
-                }
+                FmSetReg(0, addr, (uint8_t)data);
             }
             else
             {
-                //FmSetReg(1, addr - 0x200, (uint8_t)data);
-
-                if(addr - 0x200 == 0x24 || addr - 0x200 == 0x25)
-                {
-                    SetTimerA(addr - 0x200, data); //a hack to not reference OPNA2 methods in FM6.h... please kill me
-                }
-
-                else if(addr - 0x200 == 0x26)
-                {
-                    SetTimerB(data);
-                }
-
-                else if(addr - 0x200 == 0x27)
-                {
-                    SetTimerControl(data);
-                }
-
-                if(addr - 0x200 == 0x2d || addr - 0x200 == 0x2e || addr - 0x200 == 0x2f)
-                {
-                    SetPrescaler(addr - 0x200 - 0x2d);
-                }
-
-                else
-                {
-                    FmSetReg(1, addr - 0x200, (uint8_t)data);
-                }
+                FmSetReg(1, addr - 0x200, (uint8_t)data);
             }
         }
 
@@ -694,11 +647,6 @@ class OPNA2 : public OPNABase
             rhythmmask_ = (int)((mask >> 10) & ((1 << 6) - 1));
         }
 
-        uint8_t* GetADPCMBuffer()
-        {
-            return adpcmbuf;
-        }
-
         // ---------------------------------------------------------------------------
         //	リズム合成
         //
@@ -716,21 +664,6 @@ class OPNA2 : public OPNABase
         {
             db = my_min(db, 20);
             rhythm[index].volume = -(db * 2 / 3);
-        }
-
-        void SetTimerA(uint32_t addr, uint32_t data)
-        {
-            OPNABase::SetTimerA(addr, data);
-        }
-
-        void SetTimerB(uint32_t data)
-        {
-            OPNABase::SetTimerB(data);
-        }
-
-        void SetTimerControl(uint32_t data)
-        {
-            OPNABase::SetTimerControl(data);
         }
 
     // リズム音源関係
@@ -807,11 +740,24 @@ class OPNA2 : public OPNABase
         ADPCMB adpcmb[3];
         ADPCMA adpcma;
 
+        //fmvgen::Channel4 ch[6];
+
+        uint32_t lfotable[8];
+
         uint8_t prescale;
+
+        uint32_t clock;             // OPN クロック
+        uint32_t rate;              // FM 音源合成レート
+        uint32_t psgrate;           // FMGen  出力レート
+        uint32_t status;
+
+        uint32_t limitaddr;
+
+        int rhythmmask_;
 
         void RebuildTimeTable()
         {
-            OPNABase::RebuildTimeTable();
+            //OPNABase::RebuildTimeTable();
 
             int p = prescale;
             prescale = 0xff;//-1;

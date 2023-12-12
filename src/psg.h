@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "fmvgen.h"
+
 // ---------------------------------------------------------------------------
 //	class PSG
 //	PSG に良く似た音を生成する音源ユニット
@@ -282,8 +284,8 @@ class PSG
                                 scount[2] += speriod[2];
                             }
                             sample /= (1 << oversampling);
-                            fmgen::StoreSample(dest[0][ptrDest], sample);
-                            fmgen::StoreSample(dest[1][ptrDest], sample);
+                            fmvgen::StoreSample(dest[0][ptrDest], sample);
+                            fmvgen::StoreSample(dest[1][ptrDest], sample);
                             ptrDest += 2;
 
                             visVolume = sample;
@@ -320,8 +322,8 @@ class PSG
 
                             }
                             sample /= (1 << oversampling);
-                            fmgen::StoreSample(dest[0][ptrDest], sample);
-                            fmgen::StoreSample(dest[1][ptrDest], sample);
+                            fmvgen::StoreSample(dest[0][ptrDest], sample);
+                            fmvgen::StoreSample(dest[1][ptrDest], sample);
                             ptrDest += 2;
 
                             visVolume = sample;
@@ -374,8 +376,8 @@ class PSG
 
                         }
                         sample /= (1 << oversampling);
-                        fmgen::StoreSample(dest[0][ptrDest], sample);
-                        fmgen::StoreSample(dest[1][ptrDest], sample);
+                        fmvgen::StoreSample(dest[0][ptrDest], sample);
+                        fmvgen::StoreSample(dest[1][ptrDest], sample);
                         ptrDest += 2;
 
                         visVolume = sample;
@@ -391,14 +393,14 @@ class PSG
         }
 
     protected:
-        uint8_t* reg = new uint8_t[16];
+        uint8_t reg[16];
 
         uint32_t* envelop;
 
-        uint32_t* olevel = new uint32_t[3];
+        uint32_t olevel[3];
 
-        uint32_t* scount = new uint32_t[3];
-        uint32_t* speriod = new uint32_t[3];
+        uint32_t scount[3];
+        uint32_t speriod[3];
         uint32_t ecount, eperiod;
         uint32_t ncount, nperiod;
         uint32_t tperiodbase;
@@ -407,12 +409,9 @@ class PSG
         int volume;
         int mask;
 
-        uint32_t** enveloptable = new uint32_t*[16] {
-            new uint32_t[64], new uint32_t[64], new uint32_t[64], new uint32_t[64], new uint32_t[64], new uint32_t[64], new uint32_t[64], new uint32_t[64],
-            new uint32_t[64], new uint32_t[64], new uint32_t[64], new uint32_t[64], new uint32_t[64], new uint32_t[64], new uint32_t[64], new uint32_t[64]
-        };
+        uint32_t enveloptable[16][64];
 
-        uint32_t* noisetable = new uint32_t[noisetablesize];
-        int* EmitTable = new int[32] { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        uint32_t noisetable[noisetablesize];
+        int EmitTable[32] = { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 };
