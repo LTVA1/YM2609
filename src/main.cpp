@@ -34,6 +34,9 @@ int main()
     buffer[0] = new int[200];
     buffer[1] = new int[200];
 
+    memset(buffer[0], 0, 200 * sizeof(int));
+    memset(buffer[1], 0, 200 * sizeof(int));
+
     //ps.Mix(buffer, 200);
 
     reverb* rev = new reverb(44100 * 4, 39);
